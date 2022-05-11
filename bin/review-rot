@@ -224,7 +224,7 @@ def main():
         print(report_prefixes[formatting])
         for i, result in enumerate(sorted_results):
             print(result.format(
-                style=formatting, i=i, N=len(results),
+                style=formatting, i=i, n=len(results),
                 show_last_comment=arguments.get('show_last_comment')))
         print(report_suffixes[formatting])
 
