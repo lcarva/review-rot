@@ -1,0 +1,13 @@
+arguments:
+  format: json
+git_services:
+- host: github.com
+  repos:
+  - redhat-appstudio/infra-deployments
+  - redhat-appstudio/build-definitions
+  - hacbs-contract/chains
+  - hacbs-contract/ec-policies
+  - hacbs-contract/enterprise-contract-controller
+  - hacbs-contract/enterprise-contract-controller
+  token: "${GITHUB_TOKEN}"
+  type: github

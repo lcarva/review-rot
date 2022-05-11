@@ -1,0 +1,34 @@
+---
+name: Data Gatherer
+
+on:
+  push:
+    branches:
+    - enterprise
+  schedule:
+    # Hourly
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  generate-data:
+    name: Generate json data for web ui
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v3
+      with:
+        python-version: '3.x'
+    - run: pip install .
+    - run: ./bin/generate-enterprise-data.sh enterprise-data.json
+      env:
+          GITHUB_TOKEN: ${{ github.token }}
+    - uses: exuanbo/actions-deploy-gist@v1
+      with:
+        gist_id: 4e2f17a1a1ff5fd6304ba13184e95d03
+        gist_description: ""
+        gist_file_name: enterprise-data.json
+        file_path: enterprise-data.json
+        token: ${{ secrets.GIST_SECRET }}
+
