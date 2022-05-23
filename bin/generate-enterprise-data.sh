@@ -21,4 +21,4 @@ trap "rm ${config}" EXIT
 
 < examples/enterprise.yaml envsubst > ${config}
 review-rot -c ${config} | \
-    jq -r '[.[] | select([.user] | inside('${authors}'))]' > ${output}
+    jq --argjson authors "${authors}" -r '[.[] | select([.user] | inside($authors))]' > ${output}
