@@ -159,9 +159,13 @@ class GithubService(BaseService):
                     )
                     continue
 
+            title = pr.title
+            if pr.draft and not title.upper().startswith("WIP"):
+                title = "WIP: " + title
+
             res = GithubReview(
                 user=pr.user.login,
-                title=pr.title,
+                title=title,
                 url=pr.html_url,
                 time=pr.created_at,
                 updated_time=pr.updated_at,
