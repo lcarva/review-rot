@@ -3,18 +3,17 @@ set -euo pipefail
 
 output="$1"
 
-authors="$(
-echo '
-  bcaton85
-  caugello
-  cuipinghuo
-  joejstuart
-  kbenoit-rh
-  lcarva
-  robnester-rh
-  simonbaird
-  zregvart
-' | xargs | jq -c -R '. | split(" ")')"
+authors='[
+  "bcaton85",
+  "caugello",
+  "cuipinghuo",
+  "joejstuart",
+  "kbenoit-rh",
+  "lcarva",
+  "robnester-rh",
+  "simonbaird",
+  "zregvart"
+]'
 
 config=$(mktemp)
 trap "rm ${config}" EXIT
