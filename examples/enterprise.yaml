@@ -10,5 +10,7 @@ git_services:
   - redhat-appstudio/build-definitions
   - redhat-appstudio/e2e-tests
   - redhat-appstudio/infra-deployments
+  - tektoncd/chains
+  - renovate/renovate
   token: "${GITHUB_TOKEN}"
   type: github
