@@ -13,7 +13,16 @@ on:
 jobs:
   generate-data:
     name: Generate json data for web ui
+
     runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
     - uses: actions/checkout@v3
@@ -21,14 +30,13 @@ jobs:
       with:
         python-version: '3.x'
     - run: pip install .
-    - run: ./bin/generate-enterprise-data.sh enterprise-data.json
+    - run: ./bin/generate-enterprise-data.sh docs/enterprise-data.json
       env:
           GITHUB_TOKEN: ${{ github.token }}
-    - uses: exuanbo/actions-deploy-gist@v1
+    - uses: actions/configure-pages@v2
+    - uses: actions/upload-pages-artifact@v1
       with:
-        gist_id: 4e2f17a1a1ff5fd6304ba13184e95d03
-        gist_description: ""
-        gist_file_name: enterprise-data.json
-        file_path: enterprise-data.json
-        token: ${{ secrets.GIST_SECRET }}
+        path: 'docs'
+    - uses: actions/deploy-pages@v1
+      id: deployment
 

@@ -17,7 +17,7 @@ $(document).ready(function() {
 		cache: false,
 
 		// A user needs to change this value to get their site to work.
-		url: 'https://gist.githubusercontent.com/lcarva/4e2f17a1a1ff5fd6304ba13184e95d03/raw',
+		url: 'enterprise-data.json',
 
 		error: function() {
 			$('error-message').removeClass('hidden');
