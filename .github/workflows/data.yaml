@@ -30,6 +30,8 @@ jobs:
       with:
         python-version: '3.x'
     - run: pip install .
+    - name: Display API rate-limit
+      run: curl -I https://api.github.com/users/octocat
     - run: ./bin/generate-enterprise-data.sh docs/enterprise-data.json
       env:
           GITHUB_TOKEN: ${{ github.token }}
