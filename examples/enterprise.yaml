@@ -8,6 +8,7 @@ git_services:
   - hacbs-contract/ec-policies
   - hacbs-contract/enterprise-contract-controller
   - hacbs-contract/hacbs-contract.github.io
+  - redhat-appstudio/book
   - redhat-appstudio/build-definitions
   - redhat-appstudio/e2e-tests
   - redhat-appstudio/infra-deployments
