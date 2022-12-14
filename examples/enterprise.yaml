@@ -8,6 +8,7 @@ git_services:
   - hacbs-contract/ec-cli
   - hacbs-contract/ec-policies
   - hacbs-contract/enterprise-contract-controller
+  - hacbs-contract/golden-container
   - hacbs-contract/hacbs-contract.github.io
   - redhat-appstudio/book
   - redhat-appstudio/build-definitions
