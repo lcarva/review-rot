@@ -27,9 +27,9 @@ jobs:
     steps:
     - name: Checking tokens
       run: |
-        echo "Length of custom token:
+        echo "Length of custom token:"
         echo -n ${{ secrets.CUSTOM_GITHUB_TOKEN }} | wc -l
-        echo "Length of auto token:
+        echo "Length of auto token:"
         echo -n ${{ secrets.GITHUB_TOKEN }} | wc -l
     - name: Check rate limiting
       run: >
