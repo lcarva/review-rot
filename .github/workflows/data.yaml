@@ -25,6 +25,11 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
+    - name: Check rate limiting
+      run: >
+        curl -I https://api.github.com/repos/${{ github.repository }}
+          --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
+          --header 'content-type: application/json'
     - uses: actions/checkout@v3
     - uses: actions/setup-python@v3
       with:
