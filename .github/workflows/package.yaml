@@ -1,0 +1,105 @@
+---
+name: Package
+
+on:
+  push:
+  pull_request:
+
+env:
+  IMAGE_REGISTRY: quay.io
+  IMAGE_REPO: lucarval/review-rot
+  IMAGE_TAGS: latest
+  # Enable using GitHub OIDC with Fulcio and Rekor
+  COSIGN_EXPERIMENTAL: 1
+  PROVENANCE_FILE: provenance.att
+
+jobs:
+  package:
+    name: Build and push container image
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Needed for signing the container image with GitHub OIDC Token
+      id-token: write
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install Cosign
+      uses: sigstore/cosign-installer@main
+
+    - name: Install Syft
+      uses: anchore/sbom-action/download-syft@v0.7.0
+
+    - name: Log in to Red Hat Registry
+      uses: redhat-actions/podman-login@v1
+      with:
+        registry: registry.redhat.io
+        username: ${{ secrets.REGISTRY_REDHAT_IO_USER }}
+        password: ${{ secrets.REGISTRY_REDHAT_IO_PASSWORD }}
+
+    - name: Log in to quay.io
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: redhat-actions/podman-login@v1
+      with:
+        username: ${{ secrets.REGISTRY_QUAY_IO_USER }}
+        password: ${{ secrets.REGISTRY_QUAY_IO_PASSWORD }}
+        registry: quay.io
+
+    - name: Buildah Action
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${{ env.IMAGE_REPO }}
+        tags: ${{ env.IMAGE_TAGS }}
+        dockerfiles: ./Dockerfile
+
+    - name: Push to quay.io
+      id: push-image
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        registry: ${{ env.IMAGE_REGISTRY }}
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+
+    - name: Sign image with GitHub OIDC Token
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: cosign sign ${IMAGE_REGISTRY}/${IMAGE_REPO}@${DIGEST}
+      env:
+        DIGEST: ${{ steps.push-image.outputs.digest }}
+
+    - name: Generate and store SBOM
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+          syft "${IMAGE_REGISTRY}/${IMAGE_REPO}@${DIGEST}" -o spdx-json=sbom-spdx.json
+          cosign attest --predicate sbom-spdx.json --type spdx "${IMAGE_REGISTRY}/${IMAGE_REPO}@${DIGEST}"
+      env:
+        DIGEST: ${{ steps.push-image.outputs.digest }}
+
+    - name: Generate provenance
+      if: ${{ github.ref == 'refs/heads/main' }}
+      uses: philips-labs/slsa-provenance-action@v0.7.2
+      with:
+        command: generate
+        subcommand: container
+        arguments: --repository "${IMAGE_REGISTRY}/${IMAGE_REPO}" --output-path "${PROVENANCE_FILE}" --digest "${DIGEST}" --tags "${IMAGE_TAGS}"
+      env:
+        DIGEST: ${{ steps.push-image.outputs.digest }}
+        # Disable COSIGN_EXPERIMENTAL as it causes issues with this step:
+        #   https://github.com/philips-labs/slsa-provenance-action/issues/161
+        COSIGN_EXPERIMENTAL: 0
+
+    - name: Store provenance
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: |
+        jq '.predicate' "${PROVENANCE_FILE}" > provenance-predicate.att
+        cosign attest --predicate provenance-predicate.att --type slsaprovenance "${IMAGE_REGISTRY}/${IMAGE_REPO}@${DIGEST}"
+      env:
+        DIGEST: ${{ steps.push-image.outputs.digest }}
+
+# TODO: Push image to a git-hash tag, then tag it with "latest" at the end of this workflow.
+# That would solve two problems. First, previous images are not deleted from the registry which
+# would be a problem for anyone that uses digest references. Second, it closes the timing window
+# between image being tagged with "latest" and signed which affects consumers that perform image
+# signing verification.

@@ -189,3 +189,29 @@ review-rot can be executed in a containerized environment. For example:
 ```bash
 podman run -v /my/local/config.yaml:/reviewrot.yaml:z quay.io/lucarval/review-rot:latest --config /reviewrot.yaml
 ```
+
+#### Verification
+
+The container image signed and attested. Use [cosign](https://github.com/sigstore/cosign) to verify.
+For example:
+
+```bash
+# Verify image signature
+COSIGN_EXPERIMENTAL=1 cosign verify quay.io/lucarval/review-rot:latest
+
+# Verify image SLSA Provenance attestation
+COSIGN_EXPERIMENTAL=1 cosign verify-attestation --type slsaprovenance quay.io/lucarval/review-rot:latest
+
+# Verify image SPDX SBOM attestation
+COSIGN_EXPERIMENTAL=1 cosign verify-attestation --type spdx quay.io/lucarval/review-rot:latest
+```
+
+Verify those have been created from this repository. They should include the following:
+
+```text
+Certificate subject:  https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/main
+Certificate issuer URL:  https://token.actions.githubusercontent.com
+GitHub Workflow Trigger: push
+GitHub Workflow Trigger lcarva/review-rot
+GitHub Workflow Ref: refs/heads/main
+```
