@@ -17,7 +17,7 @@ $(document).ready(function() {
 		cache: false,
 
 		// A user needs to change this value to get their site to work.
-		url: 'enterprise-data.json',
+		url: 'data.json',
 
 		error: function() {
 			$('error-message').removeClass('hidden');
