@@ -1,0 +1,13 @@
+---
+name: review-rot
+author: Luiz Carvalho <lui@redhat.com>
+description: Run review-rot
+inputs:
+  config:
+    description: Path to the config file.
+    required: true
+runs:
+  using: docker
+  image: docker://quay.io/lucarval/review-rot:latest
+  args:
+    - --config=${{ inputs.config }}
