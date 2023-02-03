@@ -1,6 +1,6 @@
-### New: 
+### New:
 - Exclude Gerrit changes with no reviewers invited
-- Refactoring all tests & Tox support 
+- Refactoring all tests & Tox support
 - Phabricator support (check examples/sampleinput_phabricator.yaml )
 - Possibility of omitting WIP pull requests/merge requests in output with *--ignore-wip* argument
 - Replace *-s, -v, -d* arguments with one argument *--age*
@@ -9,7 +9,7 @@
 reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab, pagure, gerrit and phabricator.
 
 ## Sample I/P:
-Create '~/.reviewrot.yaml'. browse the [examples](https://github.com/nirzari/review-rot/tree/master/examples/) for content. 
+Create '~/.reviewrot.yaml'. browse the [examples](https://github.com/nirzari/review-rot/tree/master/examples/) for content.
 
 ## Installation
 ```shell
@@ -179,3 +179,13 @@ git_services:
 If `reviewers` is not empty and `ensure` is not defined, it's implicitly True.
 
 ID values for `excluded` and `id_key` are the same as for [AccountInfo](https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#account-info).
+
+## Usage
+
+### Container
+
+review-rot can be executed in a containerized environment. For example:
+
+```bash
+podman run -v /my/local/config.yaml:/reviewrot.yaml:z quay.io/lucarval/review-rot:latest --config /reviewrot.yaml
+```
