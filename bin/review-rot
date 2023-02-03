@@ -221,12 +221,24 @@ def main():
         irc_bot.quit()
 
     if not email and not irc and sorted_results:
-        print(report_prefixes[formatting])
-        for i, result in enumerate(sorted_results):
-            print(result.format(
-                style=formatting, i=i, n=len(results),
-                show_last_comment=arguments.get('show_last_comment')))
-        print(report_suffixes[formatting])
+        output_file = arguments.get('output')
+        if not output_file:
+            print(report_prefixes[formatting])
+            for i, result in enumerate(sorted_results):
+                print(result.format(
+                    style=formatting, i=i, n=len(results),
+                    show_last_comment=arguments.get('show_last_comment')))
+            print(report_suffixes[formatting])
+        else:
+            # TODO: Please be smarter about this...
+            with open(output_file, 'w') as f:
+                print(report_prefixes[formatting], file=f)
+                for i, result in enumerate(sorted_results):
+                    print(result.format(
+                        style=formatting, i=i, n=len(results),
+                        show_last_comment=arguments.get('show_last_comment')), file=f)
+                print(report_suffixes[formatting], file=f)
+
 
 
 def sort_by_last_comment(result):

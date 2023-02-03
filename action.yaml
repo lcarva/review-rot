@@ -6,8 +6,12 @@ inputs:
   config:
     description: Path to the config file.
     required: true
+  output:
+    description: Path to the output file.
+    required: true
 runs:
   using: docker
   image: docker://quay.io/lucarval/review-rot:latest
   args:
     - --config=${{ inputs.config }}
+    - --output=${{ inputs.output }}

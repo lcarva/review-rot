@@ -318,6 +318,9 @@ def parse_cli_args(args):
         default=None,
         help="Path to CA certificate to use for SSL " "certificate verification",
     )
+    parser.add_argument(
+        "-o", "--output", default="", help="Send output to a file instead",
+    )
 
     return parser.parse_args(args)
 
