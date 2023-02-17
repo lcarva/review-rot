@@ -11,16 +11,18 @@ env:
   IMAGE_TAGS: latest
   # Enable using GitHub OIDC with Fulcio and Rekor
   COSIGN_EXPERIMENTAL: 1
-  PROVENANCE_FILE: provenance.att
 
 jobs:
-  package:
-    name: Build and push container image
+  build:
     runs-on: ubuntu-latest
 
     permissions:
       # Needed for signing the container image with GitHub OIDC Token
       id-token: write
+
+    outputs:
+      image:  ${{ steps.build-image.outputs.image-with-tag }}
+      digest: ${{ steps.push-image.outputs.digest }}
 
     steps:
     - uses: actions/checkout@v2
@@ -77,26 +79,20 @@ jobs:
       env:
         DIGEST: ${{ steps.push-image.outputs.digest }}
 
-    - name: Generate provenance
-      if: ${{ github.ref == 'refs/heads/main' }}
-      uses: philips-labs/slsa-provenance-action@v0.7.2
-      with:
-        command: generate
-        subcommand: container
-        arguments: --repository "${IMAGE_REGISTRY}/${IMAGE_REPO}" --output-path "${PROVENANCE_FILE}" --digest "${DIGEST}" --tags "${IMAGE_TAGS}"
-      env:
-        DIGEST: ${{ steps.push-image.outputs.digest }}
-        # Disable COSIGN_EXPERIMENTAL as it causes issues with this step:
-        #   https://github.com/philips-labs/slsa-provenance-action/issues/161
-        COSIGN_EXPERIMENTAL: 0
-
-    - name: Store provenance
-      if: ${{ github.ref == 'refs/heads/main' }}
-      run: |
-        jq '.predicate' "${PROVENANCE_FILE}" > provenance-predicate.att
-        cosign attest --predicate provenance-predicate.att --type slsaprovenance "${IMAGE_REGISTRY}/${IMAGE_REPO}@${DIGEST}"
-      env:
-        DIGEST: ${{ steps.push-image.outputs.digest }}
+  provenance:
+    needs: [build]
+    permissions:
+      actions: read # for detecting the Github Actions environment.
+      id-token: write # for creating OIDC tokens for signing.
+      packages: write # for uploading attestations.
+    if: ${{ github.ref == 'refs/heads/main' }}
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@v1.4.0
+    with:
+      image: quay.io/lucarval/review-rot
+      digest: ${{ needs.build.outputs.digest }}
+      registry-username: ${{ vars.REGISTRY_QUAY_IO_USER }}
+    secrets:
+      registry-password: ${{ secrets.REGISTRY_QUAY_IO_PASSWORD }}
 
 # TODO: Push image to a git-hash tag, then tag it with "latest" at the end of this workflow.
 # That would solve two problems. First, previous images are not deleted from the registry which
