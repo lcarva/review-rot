@@ -197,13 +197,17 @@ For example:
 
 ```bash
 # Verify image signature
-COSIGN_EXPERIMENTAL=1 cosign verify quay.io/lucarval/review-rot:latest
+COSIGN_EXPERIMENTAL=1 cosign verify quay.io/lucarval/review-rot:latest \
+  --certificate-github-workflow-repository lcarva/review-rot
 
 # Verify image SLSA Provenance attestation
-COSIGN_EXPERIMENTAL=1 cosign verify-attestation --type slsaprovenance quay.io/lucarval/review-rot:latest
+COSIGN_EXPERIMENTAL=1 cosign verify-attestation quay.io/lucarval/review-rot:latest \
+  --type slsaprovenance --certificate-github-workflow-repository lcarva/review-rot
+
 
 # Verify image SPDX SBOM attestation
-COSIGN_EXPERIMENTAL=1 cosign verify-attestation --type spdx quay.io/lucarval/review-rot:latest
+COSIGN_EXPERIMENTAL=1 cosign verify-attestation quay.io/lucarval/review-rot:latest \
+  --type spdx --certificate-github-workflow-repository lcarva/review-rot
 ```
 
 Verify those have been created from this repository. They should include the following:
