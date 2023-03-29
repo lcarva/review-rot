@@ -200,7 +200,7 @@ To verify the image signature:
 ```bash
 cosign verify quay.io/lucarval/review-rot:latest \
   --certificate-github-workflow-repository lcarva/review-rot \
-  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/master' \
+  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/main' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
 ```
 
@@ -210,7 +210,7 @@ To verify the image SBOM attestation:
 cosign verify-attestation quay.io/lucarval/review-rot:latest \
   --type spdx \
   --certificate-github-workflow-repository lcarva/review-rot \
-  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/master' \
+  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/main' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
 ```
 
