@@ -192,30 +192,34 @@ podman run -v /my/local/config.yaml:/reviewrot.yaml:z quay.io/lucarval/review-ro
 
 #### Verification
 
-The container image signed and attested. Use [cosign](https://github.com/sigstore/cosign) to verify.
-For example:
+The review-rot container image is signed and attested. [cosign](https://github.com/sigstore/cosign)
+version 2 is required.
+
+To verify the image signature:
 
 ```bash
-# Verify image signature
-COSIGN_EXPERIMENTAL=1 cosign verify quay.io/lucarval/review-rot:latest \
-  --certificate-github-workflow-repository lcarva/review-rot
-
-# Verify image SLSA Provenance attestation
-COSIGN_EXPERIMENTAL=1 cosign verify-attestation quay.io/lucarval/review-rot:latest \
-  --type slsaprovenance --certificate-github-workflow-repository lcarva/review-rot
-
-
-# Verify image SPDX SBOM attestation
-COSIGN_EXPERIMENTAL=1 cosign verify-attestation quay.io/lucarval/review-rot:latest \
-  --type spdx --certificate-github-workflow-repository lcarva/review-rot
+cosign verify quay.io/lucarval/review-rot:latest \
+  --certificate-github-workflow-repository lcarva/review-rot \
+  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/master' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
 ```
 
-Verify those have been created from this repository. They should include the following:
+To verify the image SBOM attestation:
 
-```text
-Certificate subject:  https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/main
-Certificate issuer URL:  https://token.actions.githubusercontent.com
-GitHub Workflow Trigger: push
-GitHub Workflow Trigger lcarva/review-rot
-GitHub Workflow Ref: refs/heads/main
+```bash
+cosign verify-attestation quay.io/lucarval/review-rot:latest \
+  --type spdx \
+  --certificate-github-workflow-repository lcarva/review-rot \
+  --certificate-identity 'https://github.com/lcarva/review-rot/.github/workflows/package.yaml@refs/heads/master' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
+```
+
+To verify the image SLSA Provenance attestation:
+
+```bash
+cosign verify-attestation quay.io/lucarval/review-rot:latest \
+  --type slsaprovenance \
+  --certificate-github-workflow-repository lcarva/review-rot \
+  --certificate-identity 'https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@refs/tags/v1.4.0' \
+  --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
 ```
