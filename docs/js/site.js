@@ -7,6 +7,7 @@ var average_age = function(requests) {
 		cls: 'default'
 	}
 }
+
 $(document).ready(function() {
 	var entry_template = Handlebars.compile($("#entry-template").html());
 	var stats_template = Handlebars.compile($("#stats-template").html());
@@ -34,11 +35,15 @@ $(document).ready(function() {
 				if (value.updated_time) {
 					value.relative_updated_time = moment.unix(value.updated_time).fromNow();
 				}
-				if (value.title.toUpperCase().indexOf("WIP") == -1) {
-					$('#reviews').append(entry_template(value));
-				} else {
+				
+				if (value.is_automated) {
+					$('#automated-header').removeClass('hidden');
+					$('#automated-reviews').append(entry_template(value));
+				} else if (value.title.toUpperCase().indexOf("WIP") != -1) {
 					$('#wip-header').removeClass('hidden');
 					$('#wip-reviews').append(entry_template(value));
+				} else {
+					$('#reviews').append(entry_template(value));
 				}
 			});
 			$('.page-header').append(stats_template(average_age(data)));

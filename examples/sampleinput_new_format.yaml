@@ -29,6 +29,7 @@ git_services:
 arguments: 
   format: json
   reverse: true
+  categorize_automated: true
   ssl_verfiy: false
   debug: true
   cacert: ~/cacert_location
