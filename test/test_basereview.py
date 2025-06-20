@@ -1,5 +1,5 @@
 """TODO: docstring goes here."""
-from datetime import datetime
+from datetime import datetime, timezone
 from unittest import TestCase
 
 from dateutil.relativedelta import relativedelta
@@ -212,8 +212,9 @@ class BaseReviewTest(TestCase):
     def test_format_duration_no_result(self, mock_datetime):
         """Tests 'format_duration' function where we have no result."""
         # Set up mock return values and side effects
-        mock_datetime.datetime.utcnow.return_value = datetime(2018, 2, 2)
-        mock_created_at = datetime(2018, 3, 2)
+        mock_now = datetime(2018, 2, 2, tzinfo=timezone.utc)
+        mock_created_at = datetime(2018, 2, 2, tzinfo=timezone.utc)
+        mock_datetime.datetime.now.return_value = mock_now
 
         # Call the function
         response = BaseReview().format_duration(mock_created_at)
@@ -225,8 +226,9 @@ class BaseReviewTest(TestCase):
     def test_format_duration_(self, mock_datetime):
         """Tests 'format_duration' function."""
         # Set up mock return values and side effects
-        mock_datetime.datetime.utcnow.return_value = datetime(2018, 2, 2)
-        mock_created_at = datetime(2018, 1, 2)
+        mock_now = datetime(2018, 2, 2, tzinfo=timezone.utc)
+        mock_created_at = datetime(2018, 1, 2, tzinfo=timezone.utc)
+        mock_datetime.datetime.now.return_value = mock_now
 
         # Call the function
         response = BaseReview().format_duration(mock_created_at)
