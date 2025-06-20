@@ -220,6 +220,6 @@ To verify the image SLSA Provenance attestation:
 cosign verify-attestation quay.io/lucarval/review-rot:latest \
   --type slsaprovenance \
   --certificate-github-workflow-repository lcarva/review-rot \
-  --certificate-identity 'https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@refs/tags/v1.4.0' \
+  --certificate-identity 'https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_container_slsa3.yml@refs/tags/v2.1.0' \
   --certificate-oidc-issuer 'https://token.actions.githubusercontent.com'
 ```
