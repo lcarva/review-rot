@@ -51,6 +51,29 @@ def _get_token(item):
     return token
 
 
+def is_automated_pr(user):
+    """ 
+    Check if the user is a known automation bot.
+    
+    Args:
+        user (str): Username to check
+        
+    Returns:
+        bool: True if the user is an automated bot, False otherwise
+    """
+    automated_bots = [
+        'renovate[bot]',
+        'dependabot[bot]',
+        'red-hat-konflux[bot]',
+    ]
+    
+    if not user:
+        return False
+        
+    user_lower = user.lower()
+    return any(bot.lower() in user_lower for bot in automated_bots)
+
+
 def main():
     """
     Reads arguments from CLI and configuration file.
@@ -130,6 +153,11 @@ def main():
 
     if arguments.get('ignore_wip'):
         results = remove_wip(results)
+
+    # Mark reviews as automated if categorize_automated is enabled
+    if arguments.get('categorize_automated'):
+        for result in results:
+            result.is_automated = is_automated_pr(result.user)
 
     # With the --sort argument, --comment-sort is kept for backwards
     # compatibility. Equivalent to --sort commented

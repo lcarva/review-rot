@@ -110,6 +110,9 @@ def get_arguments(cli_arguments, config):
     if config_arguments.get("reverse"):
         parsed_arguments["reverse"] = True
 
+    if config_arguments.get("categorize_automated"):
+        parsed_arguments["categorize_automated"] = True
+
     email_in_config = config_arguments.get("email")
     if email_in_config:
         parsed_arguments["email"] = [
@@ -304,6 +307,11 @@ def parse_cli_args(args):
     )
     parser.add_argument(
         "--ignore-wip", help="Omit WIP PRs/MRs from output", action="store_true"
+    )
+    parser.add_argument(
+        "--categorize-automated", 
+        help="Mark automated PRs/MRs in JSON output for better categorization", 
+        action="store_true"
     )
     ssl_group = parser.add_argument_group("SSL")
     ssl_group.add_argument(
