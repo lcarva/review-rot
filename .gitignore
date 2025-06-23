@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 #config
 config.py
 
->>>>>>> fffb1d1... Initial commit
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
