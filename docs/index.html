@@ -18,18 +18,31 @@
 			<div class="page-header">
 				<h1 class="title">Open Pull Requests</h1>
 			</div>
-			<div id="reviews">
-				<!-- site.js populates this div with the reviews. -->
-			</div>
-			<hr/>
-			<h2 id="automated-header" class="hidden">Automated Pull Requests</h2>
-			<div id="automated-reviews">
-				<!-- site.js populates this div with the automated reviews. -->
-			</div>
-			<hr/>
-			<h2 id="wip-header" class="hidden">Work In Progress Reviews</h2>
-			<div id="wip-reviews">
-				<!-- site.js populates this div with the WIP reviews. -->
+
+			<!-- Bootstrap Tabs -->
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active">
+					<a href="#reviews" aria-controls="reviews" role="tab" data-toggle="tab">Regular Pull Requests</a>
+				</li>
+				<li role="presentation" id="automated-tab" class="hidden">
+					<a href="#automated-reviews" aria-controls="automated-reviews" role="tab" data-toggle="tab">Automated Pull Requests</a>
+				</li>
+				<li role="presentation" id="wip-tab" class="hidden">
+					<a href="#wip-reviews" aria-controls="wip-reviews" role="tab" data-toggle="tab">Work In Progress</a>
+				</li>
+			</ul>
+
+			<!-- Tab Content -->
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="reviews">
+					<!-- site.js populates this div with the reviews. -->
+				</div>
+				<div role="tabpanel" class="tab-pane" id="automated-reviews">
+					<!-- site.js populates this div with the automated reviews. -->
+				</div>
+				<div role="tabpanel" class="tab-pane" id="wip-reviews">
+					<!-- site.js populates this div with the WIP reviews. -->
+				</div>
 			</div>
 		</div>
 
@@ -38,6 +51,7 @@
 	</body>
 
 	<script src="js/jquery-3.2.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<script src="js/handlebars.min.js"></script>
 	<script src="js/moment.min.js"></script>
 	<script id="entry-template" type="text/x-handlebars-template">
