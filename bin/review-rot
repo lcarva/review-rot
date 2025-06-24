@@ -65,6 +65,7 @@ def is_automated_pr(user):
         'renovate[bot]',
         'dependabot[bot]',
         'red-hat-konflux[bot]',
+        'ec-automation[bot]',
     ]
     
     if not user:
