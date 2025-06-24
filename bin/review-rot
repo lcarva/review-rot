@@ -103,7 +103,6 @@ def main():
         logging.basicConfig(level=logging.INFO)
 
     results = []
-    service_results = []  # Track (service_item, results) pairs
     for item in config.get("git_services", []):
         if "type" not in item:
             log.debug("git service type not found for %s", item)
@@ -160,20 +159,16 @@ def main():
                 )
                 current_service_results.extend(service_reviews)
 
-        # Store the service config with its results
-        service_results.append((item, current_service_results))
+        # Mark reviews as automated if categorize_automated is enabled
+        if arguments.get("categorize_automated"):
+            automated_users = item.get("automated_users")
+            for result in current_service_results:
+                result.is_automated = is_automated_pr(result.user, automated_users)
+
         results.extend(current_service_results)
 
     if arguments.get("ignore_wip"):
         results = remove_wip(results)
-
-    # Mark reviews as automated if categorize_automated is enabled
-    if arguments.get("categorize_automated"):
-        for service_item, service_results_list in service_results:
-            # Get the automated users list for this specific service
-            automated_users = service_item.get("automated_users")
-            for result in service_results_list:
-                result.is_automated = is_automated_pr(result.user, automated_users)
 
     # With the --sort argument, --comment-sort is kept for backwards
     # compatibility. Equivalent to --sort commented
