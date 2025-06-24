@@ -36,3 +36,13 @@ a {
 .review {
   margin-bottom: 30px;
 }
+
+/* Add padding to tab content for better spacing */
+.tab-content {
+    padding-top: 20px;
+}
+
+/* Ensure tab panes have some breathing room */
+.tab-pane {
+    min-height: 200px;
+}

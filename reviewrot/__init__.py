@@ -1,4 +1,5 @@
 """doublt under init module."""
+
 import argparse
 import collections
 import datetime
@@ -309,9 +310,9 @@ def parse_cli_args(args):
         "--ignore-wip", help="Omit WIP PRs/MRs from output", action="store_true"
     )
     parser.add_argument(
-        "--categorize-automated", 
-        help="Mark automated PRs/MRs in JSON output for better categorization", 
-        action="store_true"
+        "--categorize-automated",
+        help="Mark automated PRs/MRs in JSON output for better categorization",
+        action="store_true",
     )
     ssl_group = parser.add_argument_group("SSL")
     ssl_group.add_argument(
@@ -327,7 +328,10 @@ def parse_cli_args(args):
         help="Path to CA certificate to use for SSL " "certificate verification",
     )
     parser.add_argument(
-        "-o", "--output", default="", help="Send output to a file instead",
+        "-o",
+        "--output",
+        default="",
+        help="Send output to a file instead",
     )
 
     return parser.parse_args(args)
@@ -411,7 +415,7 @@ def load_ordered_config(config_path):
     #  format the output to print a blank scalar rather than null
     def represent_none(self, _):
         """TODO: docstring goes here."""
-        return self.represent_scalar("tag:yaml.org,2002:null", u"")
+        return self.represent_scalar("tag:yaml.org,2002:null", "")
 
     yaml.add_representer(type(None), represent_none)
 

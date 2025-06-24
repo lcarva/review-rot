@@ -1,4 +1,5 @@
 """githubstack module."""
+
 import logging
 
 from github import Github

@@ -1,4 +1,5 @@
 """Test gitlab."""
+
 from datetime import datetime
 import logging
 from unittest import TestCase

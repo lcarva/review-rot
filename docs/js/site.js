@@ -37,10 +37,10 @@ $(document).ready(function() {
 				}
 				
 				if (value.is_automated) {
-					$('#automated-header').removeClass('hidden');
+					$('#automated-tab').removeClass('hidden');
 					$('#automated-reviews').append(entry_template(value));
 				} else if (value.title.toUpperCase().indexOf("WIP") != -1) {
-					$('#wip-header').removeClass('hidden');
+					$('#wip-tab').removeClass('hidden');
 					$('#wip-reviews').append(entry_template(value));
 				} else {
 					$('#reviews').append(entry_template(value));
