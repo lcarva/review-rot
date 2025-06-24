@@ -3,7 +3,7 @@ import logging
 import operator
 import datetime
 import os
-import pkg_resources
+import importlib_resources
 import sys
 
 from jinja2 import FileSystemLoader, Environment
@@ -18,7 +18,7 @@ from reviewrot import (
     parse_cli_args,
     CHOICES,
     DEFAULT_SUBJECT,
-    remove_wip
+    remove_wip,
 )
 
 try:
@@ -31,13 +31,13 @@ format_duration = BaseReview.format_duration
 log = logging.getLogger(__name__)
 
 # Characters to include at the beginning and end of reports
-report_prefixes = {'oneline': '', 'indented': '', 'json': '['}
-report_suffixes = {'oneline': '', 'indented': '', 'json': ']'}
+report_prefixes = {"oneline": "", "indented": "", "json": "["}
+report_suffixes = {"oneline": "", "indented": "", "json": "]"}
 
 
 def _get_token(item):
-    """ Extract token from config, or environment as necessary. """
-    token = item.get('token')
+    """Extract token from config, or environment as necessary."""
+    token = item.get("token")
     # Support pulling a token from an environment variable
     # If the token value starts with "ENV.", then the value
     # for the token will be pulled from the environment variable
@@ -45,33 +45,42 @@ def _get_token(item):
     # For example, if the token value specified in the config is
     # "ENV.FOO", then the real value for the environment variable
     # will be taken from the environment variable "FOO"
-    if token and token.startswith('ENV.'):
-        token_env_var = token.split('ENV.')[1]
+    if token and token.startswith("ENV."):
+        token_env_var = token.split("ENV.")[1]
         token = os.environ.get(token_env_var)
     return token
 
 
-def is_automated_pr(user):
-    """ 
+def is_automated_pr(user, automated_users=None):
+    """
     Check if the user is a known automation bot.
-    
+
     Args:
         user (str): Username to check
-        
+        automated_users (list, optional): List of automated users/bots from configuration.
+                                        If not provided, uses default hardcoded list.
+
     Returns:
         bool: True if the user is an automated bot, False otherwise
     """
-    automated_bots = [
-        'renovate[bot]',
-        'dependabot[bot]',
-        'red-hat-konflux[bot]',
+    # Default list for backward compatibility
+    default_automated_bots = [
+        "renovate[bot]",
+        "dependabot[bot]",
+        "red-hat-konflux[bot]",
+        "ec-automation[bot]",
     ]
-    
+
+    # Use configured list if provided, otherwise fall back to default
+    bots_to_check = (
+        automated_users if automated_users is not None else default_automated_bots
+    )
+
     if not user:
         return False
-        
+
     user_lower = user.lower()
-    return any(bot.lower() in user_lower for bot in automated_bots)
+    return any(bot.lower() in user_lower for bot in bots_to_check)
 
 
 def main():
@@ -88,34 +97,35 @@ def main():
         config,
     )
 
-    if arguments.get('debug'):
+    if arguments.get("debug"):
         logging.basicConfig(level=logging.DEBUG)
     else:
         logging.basicConfig(level=logging.INFO)
 
     results = []
-    for item in config.get('git_services', []):
-        if 'type' not in item:
-            log.debug('git service type not found for %s', item)
-            raise KeyError('git service not found for %s' % item)
+    for item in config.get("git_services", []):
+        if "type" not in item:
+            log.debug("git service type not found for %s", item)
+            raise KeyError("git service not found for %s" % item)
 
         # get git service
-        git_service = get_git_service(item['type'])
+        git_service = get_git_service(item["type"])
 
         # Reviewers config for Gerrit service only
         if type(git_service) == GerritService:
-            reviewers_config = item.get('reviewers')
+            reviewers_config = item.get("reviewers")
         else:
             reviewers_config = None
 
+        current_service_results = []
         """
         check if username and/or repository information is given for
         specified git service
         """
-        if item['repos'] is not None:
+        if item["repos"] is not None:
             # for each input call specified git service
-            if not (item['type'] == 'phabricator'):
-                for data in item['repos']:
+            if not (item["type"] == "phabricator"):
+                for data in item["repos"]:
                     """
                     split and format username and repository name to further
                     request pull requests.
@@ -124,64 +134,65 @@ def main():
                     """
                     get pull/merge/change requests for specified git service
                     """
-                    results.extend(
-                        git_service.request_reviews(
-                            user_name=res.get('user_name'),
-                            repo_name=res.get('repo_name'),
-                            age=arguments.get('age'),
-                            show_last_comment=arguments.get('show_last_comment'),
-                            token=_get_token(item),
-                            host=remove_trailing_slash_from_url(item.get('host')),
-                            ssl_verify=arguments.get('ssl_verify'),
-                            reviewers_config=reviewers_config,
-                        )
+                    service_reviews = git_service.request_reviews(
+                        user_name=res.get("user_name"),
+                        repo_name=res.get("repo_name"),
+                        age=arguments.get("age"),
+                        show_last_comment=arguments.get("show_last_comment"),
+                        token=_get_token(item),
+                        host=remove_trailing_slash_from_url(item.get("host")),
+                        ssl_verify=arguments.get("ssl_verify"),
+                        reviewers_config=reviewers_config,
                     )
+                    current_service_results.extend(service_reviews)
             else:
                 # If we are parsing from phabricator, we do not need
                 # to loop through users, rather we can pass all
                 # users as a list
-                results.extend(
-                    git_service.request_reviews(
-                        user_names=item['repos'],
-                        age=arguments.get('age'),
-                        show_last_comment=arguments.get('show_last_comment'),
-                        token=_get_token(item),
-                        host=remove_trailing_slash_from_url(item.get('host')),
-                        ssl_verify=arguments.get('ssl_verify'),
-                    )
+                service_reviews = git_service.request_reviews(
+                    user_names=item["repos"],
+                    age=arguments.get("age"),
+                    show_last_comment=arguments.get("show_last_comment"),
+                    token=_get_token(item),
+                    host=remove_trailing_slash_from_url(item.get("host")),
+                    ssl_verify=arguments.get("ssl_verify"),
                 )
+                current_service_results.extend(service_reviews)
 
-    if arguments.get('ignore_wip'):
+        # Mark reviews as automated if categorize_automated is enabled
+        if arguments.get("categorize_automated"):
+            automated_users = item.get("automated_users")
+            for result in current_service_results:
+                result.is_automated = is_automated_pr(result.user, automated_users)
+
+        results.extend(current_service_results)
+
+    if arguments.get("ignore_wip"):
         results = remove_wip(results)
-
-    # Mark reviews as automated if categorize_automated is enabled
-    if arguments.get('categorize_automated'):
-        for result in results:
-            result.is_automated = is_automated_pr(result.user)
 
     # With the --sort argument, --comment-sort is kept for backwards
     # compatibility. Equivalent to --sort commented
-    if arguments.get('comment_sort'):
-        arguments['sort'] = 'commented'
+    if arguments.get("comment_sort"):
+        arguments["sort"] = "commented"
 
     # Now, with all results in place, sort them and print
     # If sort is not passed or not provided as configuration argument, use the
     # first element of the sort choices list as default.
-    sort_by = arguments.get('sort', CHOICES['sort'][0])
+    sort_by = arguments.get("sort", CHOICES["sort"][0])
 
-    if sort_by == 'commented':
+    if sort_by == "commented":
         sorting_key = sort_by_last_comment
     else:
         sort_index = {
-            'submitted': 'time',
-            'updated': 'updated_time',
+            "submitted": "time",
+            "updated": "updated_time",
         }
         sort_attr = sort_index.get(sort_by)
 
         # As sort_index has to be explicitly matched, ensure that is kept in
         # sync with sort choices list.
         if sort_attr is None:
-            error_message = 'Sort by {} not supported'.format(sort_by)
+            error_message = "Sort by {} not supported".format(sort_by)
             log.debug(error_message)
             raise ValueError(error_message)
 
@@ -190,47 +201,43 @@ def main():
     sorted_results = sorted(
         results,
         key=sorting_key,
-        reverse=arguments.get('reverse'),
+        reverse=arguments.get("reverse"),
     )
-    formatting = arguments.get('format', 'oneline')
+    formatting = arguments.get("format", "oneline")
 
-    email = arguments.get('email')
+    email = arguments.get("email")
     if email and sorted_results:
-        mailer_configuration = config.get('mailer')
-        log.debug('SENDING MAIL')
+        mailer_configuration = config.get("mailer")
+        log.debug("SENDING MAIL")
 
         loader = FileSystemLoader(
-            searchpath=pkg_resources.resource_filename('reviewrot', ''))
+            searchpath=str(importlib_resources.files("reviewrot"))
+        )
         env = Environment(loader=loader)
-        env.filters['formatduration'] = format_duration
-        template = env.get_template('html_template.jinja')
+        env.filters["formatduration"] = format_duration
+        template = env.get_template("html_template.jinja")
 
-        output_text = template.render({
-            "results": sorted_results,
-            'show_last_comment': arguments.get('show_last_comment'),
-        })
+        output_text = template.render(
+            {
+                "results": sorted_results,
+                "show_last_comment": arguments.get("show_last_comment"),
+            }
+        )
 
         mailer = Mailer(
-            sender=mailer_configuration['sender'],
-            server=mailer_configuration['server']
+            sender=mailer_configuration["sender"], server=mailer_configuration["server"]
         )
-        subject = str(arguments.get('subject') or DEFAULT_SUBJECT)
-        mailer.send(
-            email,
-            subject,
-            output_text
-        )
-        log.debug('EMAIL SENT')
+        subject = str(arguments.get("subject") or DEFAULT_SUBJECT)
+        mailer.send(email, subject, output_text)
+        log.debug("EMAIL SENT")
 
-    irc = arguments.get('irc')
+    irc = arguments.get("irc")
     if irc and sorted_results:
-        irc_bot = IRC(config=config.get('irc'), channels=irc)
+        irc_bot = IRC(config=config.get("irc"), channels=irc)
         irc_bot.connect()
 
         # x02 is for bold formatting in irc
-        irc_bot.send_msg(
-            '\x02{0} Code Review Reminder {0}\x02'.format('*' * 45)
-        )
+        irc_bot.send_msg("\x02{0} Code Review Reminder {0}\x02".format("*" * 45))
         # output maximum 20 merge requests
         N = 20
         for i, result in enumerate(sorted_results[:N]):
@@ -238,35 +245,43 @@ def main():
 
         if len(sorted_results) > 20:
             irc_bot.send_msg(
-                '***** there are more than 20 MR,'
-                ' if you want to see all of them please'
-                ' use --email configuration *****'
+                "***** there are more than 20 MR,"
+                " if you want to see all of them please"
+                " use --email configuration *****"
             )
 
-        irc_bot.send_msg(
-            '\x02{}\x02'.format('*' * 112)
-        )
+        irc_bot.send_msg("\x02{}\x02".format("*" * 112))
         irc_bot.quit()
 
     if not email and not irc and sorted_results:
-        output_file = arguments.get('output')
+        output_file = arguments.get("output")
         if not output_file:
             print(report_prefixes[formatting])
             for i, result in enumerate(sorted_results):
-                print(result.format(
-                    style=formatting, i=i, n=len(results),
-                    show_last_comment=arguments.get('show_last_comment')))
+                print(
+                    result.format(
+                        style=formatting,
+                        i=i,
+                        n=len(results),
+                        show_last_comment=arguments.get("show_last_comment"),
+                    )
+                )
             print(report_suffixes[formatting])
         else:
             # TODO: Please be smarter about this...
-            with open(output_file, 'w') as f:
+            with open(output_file, "w") as f:
                 print(report_prefixes[formatting], file=f)
                 for i, result in enumerate(sorted_results):
-                    print(result.format(
-                        style=formatting, i=i, n=len(results),
-                        show_last_comment=arguments.get('show_last_comment')), file=f)
+                    print(
+                        result.format(
+                            style=formatting,
+                            i=i,
+                            n=len(results),
+                            show_last_comment=arguments.get("show_last_comment"),
+                        ),
+                        file=f,
+                    )
                 print(report_suffixes[formatting], file=f)
-
 
 
 def sort_by_last_comment(result):
@@ -286,8 +301,7 @@ def sort_by_last_comment(result):
         return result.last_comment.created_at
     # if result does not contain last comment, return default datetime
     # with maximum value
-    return datetime.datetime.combine(datetime.date.max,
-                                     datetime.datetime.min.time())
+    return datetime.datetime.combine(datetime.date.max, datetime.datetime.min.time())
 
 
 def remove_trailing_slash_from_url(url):
@@ -301,7 +315,7 @@ def remove_trailing_slash_from_url(url):
         url (string) url without trailing slash
     """
     if url:
-        if url.endswith('/'):
+        if url.endswith("/"):
             return url[:-1]
         return url
 
@@ -322,14 +336,14 @@ def format_user_repo_name(data, git_service):
     if isinstance(git_service, GerritService):
         # convert "/" if any into escape character for html request
         repo_name = urllib.quote_plus(data)
-    elif '/' in data:
+    elif "/" in data:
         # Splitting only once in case "/" is a valid character in the data.
-        user_name, repo_name = data.split('/', 1)
+        user_name, repo_name = data.split("/", 1)
     else:
         user_name = data
 
-    return {'user_name': user_name, 'repo_name': repo_name}
+    return {"user_name": user_name, "repo_name": repo_name}
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

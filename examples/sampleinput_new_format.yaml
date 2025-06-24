@@ -5,6 +5,11 @@ git_services:
     repos:
        - user_name
        - user_name/repo_name
+    # List of automated users/bots for this GitHub service
+    automated_users:
+       - renovate[bot]
+       - dependabot[bot]
+       - github-actions[bot]
 
   - type: gitlab
     token: my_gitlab_token
@@ -12,6 +17,10 @@ git_services:
     repos:
         - group_name/project_name
         - group_name
+    # List of automated users/bots for this GitLab service
+    automated_users:
+       - gitlab-bot
+       - renovate-bot
 
   - type: pagure
     token: my_pagure_token
@@ -19,11 +28,18 @@ git_services:
     repos:
       - repo_name
       - namespace/repo_name
+    # List of automated users/bots for this Pagure service
+    automated_users:
+       - pagure-ci
 
   - type: gerrit
     host: gerrit_host_url
     repos:
       - project_name
+    # List of automated users/bots for this Gerrit service
+    automated_users:
+       - jenkins
+       - automation-user
 
 # Optional tag
 arguments: 
