@@ -3,7 +3,7 @@ import logging
 import operator
 import datetime
 import os
-import pkg_resources
+import importlib_resources
 import sys
 
 from jinja2 import FileSystemLoader, Environment
@@ -211,7 +211,7 @@ def main():
         log.debug("SENDING MAIL")
 
         loader = FileSystemLoader(
-            searchpath=pkg_resources.resource_filename("reviewrot", "")
+            searchpath=str(importlib_resources.files("reviewrot"))
         )
         env = Environment(loader=loader)
         env.filters["formatduration"] = format_duration
