@@ -1,4 +1,5 @@
 ### New:
+- **Configurable automated users per git service** - You can now configure automated users/bots per service instead of using a hardcoded list
 - Exclude Gerrit changes with no reviewers invited
 - Refactoring all tests & Tox support
 - Phabricator support (check examples/sampleinput_phabricator.yaml )
@@ -149,6 +150,55 @@ Or in command line:
 review-rot --irc '#channel1' '#channel2'
 review-rot --irc \#channel1 \#channel2
 ```
+
+## Automated PR/MR Categorization
+
+review-rot can categorize PRs/MRs as automated when the `categorize_automated` argument is enabled. You can configure which users/bots should be considered automated on a per-service basis.
+
+### Configuration
+
+Add an `automated_users` list to each git service in your configuration:
+
+```yaml
+git_services:
+  - type: github
+    token: my_github_token
+    repos:
+       - user_name/repo_name
+    # Configure automated users/bots for this GitHub service
+    automated_users:
+       - renovate[bot]
+       - dependabot[bot]
+       - github-actions[bot]
+       - codecov[bot]
+
+  - type: gitlab
+    token: my_gitlab_token
+    host: https://gitlab.com
+    repos:
+        - group_name/project_name
+    # Configure automated users/bots for this GitLab service
+    automated_users:
+       - gitlab-bot
+       - renovate-bot
+       - ci-bot
+
+arguments:
+  # Enable automated categorization
+  categorize_automated: true
+```
+
+### Backward Compatibility
+
+If `automated_users` is not specified for a service, review-rot will use the default hardcoded list:
+- `renovate[bot]`
+- `dependabot[bot]`
+- `red-hat-konflux[bot]`
+- `ec-automation[bot]`
+
+### Usage
+
+When `categorize_automated` is enabled, each PR/MR result will have an `is_automated` field indicating whether it was created by an automated user. This is useful for filtering or highlighting automated PRs in reports.
 
 ## Gerrit service
 

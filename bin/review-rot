@@ -51,28 +51,36 @@ def _get_token(item):
     return token
 
 
-def is_automated_pr(user):
+def is_automated_pr(user, automated_users=None):
     """
     Check if the user is a known automation bot.
 
     Args:
         user (str): Username to check
+        automated_users (list, optional): List of automated users/bots from configuration.
+                                        If not provided, uses default hardcoded list.
 
     Returns:
         bool: True if the user is an automated bot, False otherwise
     """
-    automated_bots = [
+    # Default list for backward compatibility
+    default_automated_bots = [
         "renovate[bot]",
         "dependabot[bot]",
         "red-hat-konflux[bot]",
         "ec-automation[bot]",
     ]
 
+    # Use configured list if provided, otherwise fall back to default
+    bots_to_check = (
+        automated_users if automated_users is not None else default_automated_bots
+    )
+
     if not user:
         return False
 
     user_lower = user.lower()
-    return any(bot.lower() in user_lower for bot in automated_bots)
+    return any(bot.lower() in user_lower for bot in bots_to_check)
 
 
 def main():
@@ -95,6 +103,7 @@ def main():
         logging.basicConfig(level=logging.INFO)
 
     results = []
+    service_results = []  # Track (service_item, results) pairs
     for item in config.get("git_services", []):
         if "type" not in item:
             log.debug("git service type not found for %s", item)
@@ -109,6 +118,7 @@ def main():
         else:
             reviewers_config = None
 
+        current_service_results = []
         """
         check if username and/or repository information is given for
         specified git service
@@ -125,40 +135,45 @@ def main():
                     """
                     get pull/merge/change requests for specified git service
                     """
-                    results.extend(
-                        git_service.request_reviews(
-                            user_name=res.get("user_name"),
-                            repo_name=res.get("repo_name"),
-                            age=arguments.get("age"),
-                            show_last_comment=arguments.get("show_last_comment"),
-                            token=_get_token(item),
-                            host=remove_trailing_slash_from_url(item.get("host")),
-                            ssl_verify=arguments.get("ssl_verify"),
-                            reviewers_config=reviewers_config,
-                        )
-                    )
-            else:
-                # If we are parsing from phabricator, we do not need
-                # to loop through users, rather we can pass all
-                # users as a list
-                results.extend(
-                    git_service.request_reviews(
-                        user_names=item["repos"],
+                    service_reviews = git_service.request_reviews(
+                        user_name=res.get("user_name"),
+                        repo_name=res.get("repo_name"),
                         age=arguments.get("age"),
                         show_last_comment=arguments.get("show_last_comment"),
                         token=_get_token(item),
                         host=remove_trailing_slash_from_url(item.get("host")),
                         ssl_verify=arguments.get("ssl_verify"),
+                        reviewers_config=reviewers_config,
                     )
+                    current_service_results.extend(service_reviews)
+            else:
+                # If we are parsing from phabricator, we do not need
+                # to loop through users, rather we can pass all
+                # users as a list
+                service_reviews = git_service.request_reviews(
+                    user_names=item["repos"],
+                    age=arguments.get("age"),
+                    show_last_comment=arguments.get("show_last_comment"),
+                    token=_get_token(item),
+                    host=remove_trailing_slash_from_url(item.get("host")),
+                    ssl_verify=arguments.get("ssl_verify"),
                 )
+                current_service_results.extend(service_reviews)
+
+        # Store the service config with its results
+        service_results.append((item, current_service_results))
+        results.extend(current_service_results)
 
     if arguments.get("ignore_wip"):
         results = remove_wip(results)
 
     # Mark reviews as automated if categorize_automated is enabled
     if arguments.get("categorize_automated"):
-        for result in results:
-            result.is_automated = is_automated_pr(result.user)
+        for service_item, service_results_list in service_results:
+            # Get the automated users list for this specific service
+            automated_users = service_item.get("automated_users")
+            for result in service_results_list:
+                result.is_automated = is_automated_pr(result.user, automated_users)
 
     # With the --sort argument, --comment-sort is kept for backwards
     # compatibility. Equivalent to --sort commented
