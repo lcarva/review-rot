@@ -1,4 +1,5 @@
 """basereview module."""
+
 from collections import namedtuple, OrderedDict
 import datetime
 import hashlib
@@ -177,7 +178,9 @@ class BaseReview(object):
         find the relative time difference between now and
         review request filed to retrieve relative information
         """
-        rel_diff = relativedelta(datetime.datetime.now(datetime.timezone.utc), created_at)
+        rel_diff = relativedelta(
+            datetime.datetime.now(datetime.timezone.utc), created_at
+        )
 
         time_dict = OrderedDict(
             [

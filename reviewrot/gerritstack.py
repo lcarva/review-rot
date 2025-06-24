@@ -1,4 +1,5 @@
 """gerritstack module."""
+
 from datetime import datetime
 import logging
 

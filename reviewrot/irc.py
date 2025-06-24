@@ -1,4 +1,5 @@
 """ircstack module."""
+
 import logging
 import socket
 import sys

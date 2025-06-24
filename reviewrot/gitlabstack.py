@@ -1,4 +1,5 @@
 """gitlabstack module."""
+
 import datetime
 import logging
 import os
