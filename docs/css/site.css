@@ -46,3 +46,13 @@ a {
 .tab-pane {
     min-height: 200px;
 }
+
+/* Labels styling */
+.labels {
+  margin: 5px 0;
+}
+
+.labels .label {
+  margin-right: 3px;
+  font-size: 0.8em;
+}

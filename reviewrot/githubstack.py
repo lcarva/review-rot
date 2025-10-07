@@ -175,6 +175,7 @@ class GithubService(BaseService):
                 last_comment=last_comment,
                 project_name=repo.full_name,
                 project_url=repo.html_url,
+                labels=[label.name for label in pr.labels if label.name in ['XS', 'S', 'M', 'L', 'XL', 'XXL']],
             )
             log.debug(res)
             res_.append(res)
