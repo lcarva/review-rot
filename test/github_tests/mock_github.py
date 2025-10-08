@@ -50,7 +50,7 @@ class MockGithubCommentsEmpty:
     """Mocks Github Comment object with no comments."""
 
     totalCount = 0
-    reversed = [MockValue]
+    reversed = []
 
 
 class MockPull:
@@ -63,6 +63,8 @@ class MockPull:
     updated_at = "dummy_update"
     review_comments = "dummy_comments"
     comments = "dummy_comments"
+    labels = []
+    draft = False
 
 
 class MockRepo:

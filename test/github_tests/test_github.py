@@ -189,6 +189,7 @@ class GithubTest(TestCase):
             updated_time="dummy_update",
             url="dummy_url",
             user="dummy_user",
+            labels=[],
         )
         mock_uname.get_repo.assert_called_with("dummy_repo")
         mock_check_request_state.assert_called_with(
@@ -336,6 +337,7 @@ class GithubTest(TestCase):
             repo_name="dummy_repo",
             age=None,
             show_last_comment=None,
+            labels=None,
         )
         mock_user_object.get_repos.assert_not_called()
         mock_github_instance.get_user.assert_called_with("dummy_user")
@@ -365,6 +367,7 @@ class GithubTest(TestCase):
             repo_name="dummy_repo",
             age=None,
             show_last_comment=None,
+            labels=None,
         )
 
         mock_user_object.get_repos.assert_any_call()
