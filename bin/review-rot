@@ -4,7 +4,6 @@ import operator
 import datetime
 import os
 import sys
-import urllib.parse as urllib
 
 from reviewrot.basereview import BaseReview
 from reviewrot import (
@@ -13,7 +12,6 @@ from reviewrot import (
     load_config_file,
     parse_cli_args,
     CHOICES,
-    DEFAULT_SUBJECT,
     remove_wip,
 )
 
