@@ -6,8 +6,6 @@ import os
 import importlib_resources
 import sys
 
-from jinja2 import FileSystemLoader, Environment
-from reviewrot.mailer import Mailer
 from reviewrot.basereview import BaseReview
 from reviewrot import (
     GerritService,
@@ -206,33 +204,7 @@ def main():
     )
     formatting = arguments.get("format", "oneline")
 
-    email = arguments.get("email")
-    if email and sorted_results:
-        mailer_configuration = config.get("mailer")
-        log.debug("SENDING MAIL")
-
-        loader = FileSystemLoader(
-            searchpath=str(importlib_resources.files("reviewrot"))
-        )
-        env = Environment(loader=loader)
-        env.filters["formatduration"] = format_duration
-        template = env.get_template("html_template.jinja")
-
-        output_text = template.render(
-            {
-                "results": sorted_results,
-                "show_last_comment": arguments.get("show_last_comment"),
-            }
-        )
-
-        mailer = Mailer(
-            sender=mailer_configuration["sender"], server=mailer_configuration["server"]
-        )
-        subject = str(arguments.get("subject") or DEFAULT_SUBJECT)
-        mailer.send(email, subject, output_text)
-        log.debug("EMAIL SENT")
-
-    if not email and sorted_results:
+    if sorted_results:
         output_file = arguments.get("output")
         if not output_file:
             print(report_prefixes[formatting])

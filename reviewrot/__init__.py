@@ -74,7 +74,6 @@ def get_arguments(cli_arguments, config):
             "Argument section in config can't be empty,"
             " remove the section or add arguments"
         )
-    config_mailer = config.get("mailer", {})
 
     parsed_arguments = {}
     command_line_args = vars(cli_arguments)
@@ -113,15 +112,6 @@ def get_arguments(cli_arguments, config):
     if config_arguments.get("categorize_automated"):
         parsed_arguments["categorize_automated"] = True
 
-    email_in_config = config_arguments.get("email")
-    if email_in_config:
-        parsed_arguments["email"] = [
-            email.strip() for email in email_in_config.split(",")
-        ]
-
-    if "subject" not in parsed_arguments and "subject" in config_arguments:
-        parsed_arguments["subject"] = config_arguments["subject"]
-
     age_in_config = config_arguments.get("age")
     if age_in_config:
         values = age_in_config.split(" ")
@@ -151,19 +141,6 @@ def get_arguments(cli_arguments, config):
     if format == "oneline" and show_last_comment is not None:
         raise ValueError(
             "{} format doesn't support last comment functionality".format(format)
-        )
-
-    email = parsed_arguments.get("email")
-    if email and format:
-        raise ValueError("No format should be specified when selecting email output")
-
-    if email and any(
-        property not in config_mailer for property in ["server", "sender"]
-    ):
-        raise ValueError(
-            "Missing mailer configuration."
-            " Check examples/sampleinput_email.yaml "
-            "for correct configuration."
         )
 
     return parsed_arguments
@@ -277,10 +254,6 @@ def parse_cli_args(args):
     parser.add_argument(
         "--debug", action="store_true", help="Display debug logs on console"
     )
-    parser.add_argument(
-        "--email", nargs="+", default=None, help="send output to list of email adresses"
-    )
-    parser.add_argument("--subject", help="Email subject text")
     parser.add_argument(
         "--ignore-wip", help="Omit WIP PRs/MRs from output", action="store_true"
     )

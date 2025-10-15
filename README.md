@@ -38,7 +38,6 @@ usage: review-rot [-h] [-c CONFIG]
                   [--age {older,newer} [#y #m #d #h #min ...]]
                   [-f {oneline,indented,json}] [--show-last-comment [DAYS]]
                   [--reverse] [--sort {submitted,updated,commented}] [--debug]
-                  [--email EMAIL [EMAIL ...]] [--subject SUBJECT]
                   [--ignore-wip] [-k] [--cacert CACERT]
 
 Lists pull/merge/change requests for github, gitlab, pagure, gerrit and
@@ -61,9 +60,6 @@ optional arguments:
                         Display results sorted by the chosen event time.
                         Defaults to submitted
   --debug               Display debug logs on console
-  --email EMAIL [EMAIL ...]
-                        send output to list of email adresses
-  --subject SUBJECT     Email subject text.
   --ignore-wip          Omit WIP PRs/MRs from output
 
 SSL:
@@ -82,14 +78,9 @@ review-rot --age newer 5d 10h
 ```
 outputs MRs/PRs which submitted in the last 5 days and 10 hours
 
-You can use **--show-last-comment** flag to include the text of last comment with formats:
-- json
+You can use **--show-last-comment** flag to include the text of last comment with json format:
 ```
 review-rot -f json --show-last-comment
-```
-- email
-```
-review-rot --email user@example.com --show-last-comment
 ```
 
 ## Web UI
@@ -104,26 +95,6 @@ First, set up a *cron job* to run review-rot every (say) 15 minutes:
 ```
 
 Then, modify `web/js/site.js` to point the data url to the location of your new file.
-
-## Email notification
-
-To use email notification functionality you must specify mailer configuration in config file
-```
-mailer:
-  sender: do-not-reply@example.com
-  server: smtp.example.com
-```
-
-then specify email addresses in config file:
-```
-arguments:
-  email: user1@example.com, user2@example.com
-```
-
-Or in command line:
-```
-review-rot --email user1@example.com user2@example.com
-```
 
 ## Automated PR/MR Categorization
 
