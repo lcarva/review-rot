@@ -2,20 +2,10 @@
 
 from datetime import datetime, timezone
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
 from dateutil.relativedelta import relativedelta
 from reviewrot.basereview import Age, BaseReview, BaseService
-
-try:
-    # Python 3 >
-    from unittest.mock import patch  # noqa: F401
-except ImportError:
-    from mock import patch  # noqa: F401
-try:
-    # Python 3.3 >
-    from unittest.mock import MagicMock  # noqa: F401
-except ImportError:
-    from mock import MagicMock  # noqa: F401
 
 
 PATH = "reviewrot.basereview."

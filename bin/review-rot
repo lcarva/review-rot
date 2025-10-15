@@ -3,8 +3,8 @@ import logging
 import operator
 import datetime
 import os
-import importlib_resources
 import sys
+import urllib.parse as urllib
 
 from reviewrot.basereview import BaseReview
 from reviewrot import (
@@ -16,11 +16,6 @@ from reviewrot import (
     DEFAULT_SUBJECT,
     remove_wip,
 )
-
-try:
-    import urllib.parse as urllib  # Python 3
-except ImportError:
-    import urllib  # Python 2
 
 format_duration = BaseReview.format_duration
 

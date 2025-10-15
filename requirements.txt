@@ -3,6 +3,4 @@ PyGithub
 PyYAML
 dateutils
 python-gitlab>=1.6.0
-six
 Jinja2
-importlib_resources

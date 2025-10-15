@@ -6,10 +6,9 @@ import logging
 import os
 from os.path import dirname, join
 import unittest
-from unittest import TestCase
+from unittest import mock, TestCase
 
 from dateutil.relativedelta import relativedelta
-import mock
 from reviewrot import (
     get_arguments,
     load_config_file,

@@ -13,8 +13,6 @@ import requests
 from reviewrot.basereview import Age
 from reviewrot.githubstack import GithubService
 from reviewrot.gitlabstack import GitlabService
-from six import iteritems
-from six.moves import input
 import yaml
 
 
@@ -341,7 +339,7 @@ def load_ordered_config(config_path):
 
     def dict_representer(dumper, data):
         """TODO: docstring goes here."""
-        return dumper.represent_mapping(_mapping_tag, iteritems(data))
+        return dumper.represent_mapping(_mapping_tag, data.items())
 
     def dict_constructor(loader, node):
         """TODO: docstring goes here."""
