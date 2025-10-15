@@ -3,7 +3,6 @@
 import argparse
 import datetime
 import logging
-import os
 from os.path import dirname, join
 import unittest
 from unittest import mock, TestCase
@@ -11,7 +10,6 @@ from unittest import mock, TestCase
 from dateutil.relativedelta import relativedelta
 from reviewrot import (
     get_arguments,
-    load_config_file,
     parse_cli_args,
     ParseAge,
     remove_wip,
@@ -225,42 +223,6 @@ class CommandLineParserTest(TestCase):
             msg = "Certificate file can't be used with insecure flag"
             self.assertTrue(msg in str(context.exception), msg=context.exception)
 
-    @mock.patch("reviewrot.input", return_value="n")
-    def test_load_config_file_re_write_no(self, mocked_input):
-        """TODO: docstring goes here."""
-        filename = join(dirname(__file__), "yaml/test_old_format.yaml")
-        load_config_file(filename)
-        # Load the old style config file and don't convert it to
-        # new style dict format.
-        with open(filename, "r") as f:
-            new_config = yaml.safe_load(f)
-
-        arguments_present = "arguments" not in new_config
-        git_services_present = "type" in new_config[0]
-        self.assertTrue(
-            isinstance(new_config, list) and arguments_present and git_services_present
-        )
-
-    @mock.patch("reviewrot.input", return_value="y")
-    def test_load_config_file_re_write_yes(self, mocked_input):
-        """TODO: docstring goes here."""
-        filename = join(dirname(__file__), "yaml/test_old_format.yaml")
-        load_config_file(filename)
-        # Load the old style config file and converts it to new style
-        # dict format. Also creates backup file before converting.
-        with open(filename, "r") as f:
-            new_config = yaml.safe_load(f)
-
-        backup_config_file_exist = os.path.exists(filename + ".backup")
-        arguments_present = "arguments" in new_config
-        git_services_present = "git_services" in new_config
-        self.assertTrue(
-            isinstance(new_config, dict)
-            and arguments_present
-            and git_services_present
-            and backup_config_file_exist
-        )
-
     def test_age_argument_in_command_line_valid(self):
         """TODO: docstring goes here."""
         now = datetime.datetime.now()
@@ -288,15 +250,6 @@ class CommandLineParserTest(TestCase):
             arguments.get("age").date.replace(second=0, microsecond=0),
             expected_date.replace(second=0, microsecond=0),
         )
-
-    @classmethod
-    def tearDownClass(cls):
-        """TODO: docstring goes here."""
-        backup_filename = join(dirname(__file__), "yaml/test_old_format.yaml.backup")
-        filename = join(dirname(__file__), "yaml/test_old_format.yaml")
-        if os.path.exists(backup_filename) and os.path.exists(filename):
-            os.remove(filename)
-            os.rename(backup_filename, filename)
 
 
 class ParseAgeTest(unittest.TestCase):

@@ -67,28 +67,6 @@ class BaseService(object):
 
         return False
 
-    def _decode_response(self, response):
-        """
-        Remove Gerrit's prefix and convert to JSON.
-
-        Args:
-            response (Response): Content is decoded from response object
-        Returns:
-            Converted JSON content
-        Raises:
-            ValueError if the content is not in proper json format.
-        """
-        gerrit_json_prefix = ")]}'\n"
-        content = response.content.strip()
-        try:
-            if response.encoding:
-                content = content.decode(response.encoding)
-            if content.startswith(gerrit_json_prefix):
-                content = content[len(gerrit_json_prefix) :]
-            return json.loads(content)
-        except ValueError:
-            raise ValueError("Invalid json content: %s" % content)
-
     def _call_api(self, url, method="GET", ssl_verify=True):
         """
         Method used to call the API.
@@ -104,14 +82,8 @@ class BaseService(object):
         Returns:
             raw JSON returned by API
         """
-        decoded_response = ""
         response = self.get_response(method, url, ssl_verify)
-        try:
-            # fails for gerrit services
-            decoded_response = response.json()
-        except ValueError:
-            decoded_response = self._decode_response(response)
-        return decoded_response
+        return response.json()
 
     def get_response(self, method, url, ssl_verify):
         """

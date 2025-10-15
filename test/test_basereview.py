@@ -84,50 +84,8 @@ class BaseServiceTest(TestCase):
         # Validate function calls and response
         self.assertTrue(response)
 
-    @patch(PATH + "json")
-    def test_decode_response(self, mock_json):
-        """Tests '_decode_response' function."""
-        # Set up mock return values and side effects
-        mock_response = MagicMock()
-        mock_response.encoding = True
-        mock_content = MagicMock()
-        mock_content.decode.return_value = mock_content
-        mock_content.startswith.return_value = True
-        mock_response.content.strip.return_value = mock_content
-        mock_json.loads.return_value = "mock_content"
-
-        # Call the function
-        response = BaseService()._decode_response(mock_response)
-
-        # Validate function calls and response
-        self.assertEqual(response, "mock_content")
-        mock_content.decode.assert_called_with(True)
-        mock_content.startswith.assert_called_with(")]}'\n")
-        mock_json.loads.assert_called_with(mock_content.__getitem__())
-
-    @patch(PATH + "json")
-    def test_decode_response_valueerror(self, mock_json):
-        """Tests '_decode_response' where we have a ValueError."""
-        # Set up mock return values and side effects
-        mock_response = MagicMock()
-        mock_response.encoding = True
-        mock_content = MagicMock()
-        mock_content.decode.side_effect = ValueError
-        mock_response.content.strip.return_value = mock_content
-
-        # Call the function
-        with self.assertRaises(ValueError):
-            BaseService()._decode_response(mock_response)
-
-        # Validate function calls and response
-        mock_content.decode.assert_called_with(True)
-        mock_content.startswith.assert_not_called()
-        mock_json.loads.assert_not_called()
-
     @patch(PATH + "BaseService.get_response")
-    @patch(PATH + "BaseService._decode_response")
-    @patch(PATH + "json")
-    def test_call_api(self, mock_json, mock_decode_response, mock_get_response):
+    def test_call_api(self, mock_get_response):
         """Tests '_call_api'."""
         # Set up mock return values and side effects
         mock_response = MagicMock()
@@ -141,29 +99,6 @@ class BaseServiceTest(TestCase):
         self.assertEqual(response, "mock_decoded_response")
         mock_response.json.assert_called()
         mock_get_response.assert_called_with("GET", "mock_url", True)
-        mock_decode_response.assert_not_called()
-
-    @patch(PATH + "BaseService.get_response")
-    @patch(PATH + "BaseService._decode_response")
-    @patch(PATH + "json")
-    def test_call_api_valueerror(
-        self, mock_json, mock_decode_response, mock_get_response
-    ):
-        """Tests '_call_api' where we have a ValueError."""
-        # Set up mock return values and side effects
-        mock_response = MagicMock()
-        mock_response.json.side_effect = ValueError
-        mock_decode_response.return_value = "mock_decoded_response"
-        mock_get_response.return_value = mock_response
-
-        # Call the function
-        response = BaseService()._call_api(url="mock_url")
-
-        # Validate function calls and response
-        self.assertEqual(response, "mock_decoded_response")
-        mock_response.json.assert_called()
-        mock_get_response.assert_called_with("GET", "mock_url", True)
-        mock_decode_response.assert_called_with(mock_response)
 
     def test_get_response(self):
         """Tests 'get_response' function."""
