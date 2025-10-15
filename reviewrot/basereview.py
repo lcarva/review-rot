@@ -149,6 +149,7 @@ class BaseReview(object):
         project_name=None,
         project_url=None,
         is_automated=False,
+        labels=None,
     ):
         """Initialization dunder."""
         self.user = user
@@ -162,6 +163,7 @@ class BaseReview(object):
         self.project_name = project_name
         self.project_url = project_url
         self.is_automated = is_automated
+        self.labels = labels or []
 
     @staticmethod
     def format_duration(created_at):
@@ -353,6 +355,7 @@ class BaseReview(object):
             "type": type(self).__name__,
             "image": self.image,
             "is_automated": self.is_automated,
+            "labels": self.labels,
         }
         if self.last_comment:
             data["last_comment"] = {

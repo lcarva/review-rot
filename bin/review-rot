@@ -143,6 +143,7 @@ def main():
                         host=remove_trailing_slash_from_url(item.get("host")),
                         ssl_verify=arguments.get("ssl_verify"),
                         reviewers_config=reviewers_config,
+                        labels=item.get("labels"),
                     )
                     current_service_results.extend(service_reviews)
             else:
@@ -156,6 +157,7 @@ def main():
                     token=_get_token(item),
                     host=remove_trailing_slash_from_url(item.get("host")),
                     ssl_verify=arguments.get("ssl_verify"),
+                    labels=item.get("labels"),
                 )
                 current_service_results.extend(service_reviews)
 

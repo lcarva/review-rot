@@ -25,6 +25,7 @@ class GithubService(BaseService):
         show_last_comment=None,
         token=None,
         host=None,
+        labels=None,
         **kwargs
     ):
         """
@@ -47,6 +48,9 @@ class GithubService(BaseService):
             token (str): Github token for authentication
             host (str): Github host name (This value is not yet supported.
                         Default behavior is to use public github instance.)
+            labels (list): List of label names to display in the UI. If provided,
+                           only these labels will be shown for each PR.
+                           If None, no labels are displayed.
         Returns:
             response (list): Returns list of list of pull requests for
                              specified username and reponame or all reponame
@@ -70,6 +74,7 @@ class GithubService(BaseService):
                 repo_name=repo_name,
                 age=age,
                 show_last_comment=show_last_comment,
+                labels=labels,
             )
             # extend incase of a non empty result
             if res:
@@ -89,13 +94,14 @@ class GithubService(BaseService):
                     repo_name=repo.name,
                     age=age,
                     show_last_comment=show_last_comment,
+                    labels=labels,
                 )
                 # extend incase of a non empty result
                 if res:
                     response.extend(res)
         return response
 
-    def get_reviews(self, uname, repo_name, age=None, show_last_comment=None):
+    def get_reviews(self, uname, repo_name, age=None, show_last_comment=None, labels=None):
         """
         Fetches pull requests for specified username and repo name.
 
@@ -111,6 +117,9 @@ class GithubService(BaseService):
                                      filter out pull requests in which
                                      last comments are newer than
                                      specified number of days
+            labels (list): List of label names to display in the UI. If provided,
+                           only these labels will be shown for each PR.
+                           If None, no labels are displayed.
         Returns:
             res_ (list): Returns list of pull requests for specified
                          username and repo name
@@ -175,6 +184,7 @@ class GithubService(BaseService):
                 last_comment=last_comment,
                 project_name=repo.full_name,
                 project_url=repo.html_url,
+                labels=[label.name for label in pr.labels if label.name in labels] if labels is not None else [],
             )
             log.debug(res)
             res_.append(res)

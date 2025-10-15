@@ -10,6 +10,15 @@ git_services:
        - renovate[bot]
        - dependabot[bot]
        - github-actions[bot]
+    # List of labels to display in the UI (optional)
+    # If provided, only these labels will be shown for each PR
+    # If not provided, no labels will be displayed (clean UI)
+    labels:
+       - XS
+       - S
+       - M
+       - critical
+       - bug
 
   - type: gitlab
     token: my_gitlab_token
