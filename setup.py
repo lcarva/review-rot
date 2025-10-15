@@ -36,4 +36,5 @@ setup(
     install_requires=install_requires,
     scripts=["bin/review-rot"],
     include_package_data=True,
+    python_requires=">=3.10",
 )
