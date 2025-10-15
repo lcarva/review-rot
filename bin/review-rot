@@ -8,7 +8,6 @@ import sys
 
 from reviewrot.basereview import BaseReview
 from reviewrot import (
-    GerritService,
     get_git_service,
     get_arguments,
     load_config_file,
@@ -108,12 +107,6 @@ def main():
         # get git service
         git_service = get_git_service(item["type"])
 
-        # Reviewers config for Gerrit service only
-        if type(git_service) == GerritService:
-            reviewers_config = item.get("reviewers")
-        else:
-            reviewers_config = None
-
         current_service_results = []
         """
         check if username and/or repository information is given for
@@ -138,7 +131,6 @@ def main():
                     token=_get_token(item),
                     host=remove_trailing_slash_from_url(item.get("host")),
                     ssl_verify=arguments.get("ssl_verify"),
-                    reviewers_config=reviewers_config,
                     labels=item.get("labels"),
                 )
                 current_service_results.extend(service_reviews)
@@ -269,10 +261,7 @@ def format_user_repo_name(data, git_service):
     user_name = None
     repo_name = None
 
-    if isinstance(git_service, GerritService):
-        # convert "/" if any into escape character for html request
-        repo_name = urllib.quote_plus(data)
-    elif "/" in data:
+    if "/" in data:
         # Splitting only once in case "/" is a valid character in the data.
         user_name, repo_name = data.split("/", 1)
     else:

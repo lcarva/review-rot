@@ -31,15 +31,6 @@ git_services:
        - gitlab-bot
        - renovate-bot
 
-  - type: gerrit
-    host: gerrit_host_url
-    repos:
-      - project_name
-    # List of automated users/bots for this Gerrit service
-    automated_users:
-       - jenkins
-       - automation-user
-
 # Optional tag
 arguments: 
   format: json

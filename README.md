@@ -1,12 +1,11 @@
 ### New:
 - **Configurable automated users per git service** - You can now configure automated users/bots per service instead of using a hardcoded list
-- Exclude Gerrit changes with no reviewers invited
 - Refactoring all tests & Tox support
 - Possibility of omitting WIP pull requests/merge requests in output with *--ignore-wip* argument
 - Replace *-s, -v, -d* arguments with one argument *--age*
 
 # review-rot
-reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab and gerrit.
+reviewrot is a CLI tool, that helps to list down open review requests from github and gitlab.
 
 ## Sample I/P:
 Create '~/.reviewrot.yaml'. browse the [examples](https://github.com/nirzari/review-rot/tree/master/examples/) for content.
@@ -39,7 +38,7 @@ usage: review-rot [-h] [-c CONFIG]
                   [--reverse] [--sort {submitted,updated,commented}] [--debug]
                   [--ignore-wip] [-k] [--cacert CACERT]
 
-Lists pull/merge/change requests for github, gitlab and gerrit
+Lists pull/merge/change requests for github and gitlab
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -142,36 +141,6 @@ If `automated_users` is not specified for a service, review-rot will use the def
 ### Usage
 
 When `categorize_automated` is enabled, each PR/MR result will have an `is_automated` field indicating whether it was created by an automated user. This is useful for filtering or highlighting automated PRs in reports.
-
-## Gerrit service
-
-### [NEW] Exclude changes with no reviewers invited:
-
-```
-git_services:
-  - type: gerrit
-    reviewers:
-      ensure: True
-```
-
-User accounts can be excluded from the reviewers list for the change, for example, to not count bot accounts as reviewers:
-
-```
-git_services:
-  - type: gerrit
-    reviewers:
-      id_key: email
-      excluded:
-        - the.bot@example.com
-```
-
-`id_key` is the `FieldName` to get the value to identify the reviewer. If not set defaults to `username`.
-
-`excluded` is a list of reviewers, identified by their `id_key` in the reviewers entity.
-
-If `reviewers` is not empty and `ensure` is not defined, it's implicitly True.
-
-ID values for `excluded` and `id_key` are the same as for [AccountInfo](https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#account-info).
 
 ## Usage
 

@@ -11,8 +11,3 @@
   repos:
       - group_name/project_name
       - group_name
-
-- type: gerrit
-  host: gerrit_host_url
-  repos:
-    - project_name

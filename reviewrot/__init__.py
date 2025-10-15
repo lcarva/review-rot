@@ -11,7 +11,6 @@ from shutil import copyfile
 from dateutil.relativedelta import relativedelta
 import requests
 from reviewrot.basereview import Age
-from reviewrot.gerritstack import GerritService
 from reviewrot.githubstack import GithubService
 from reviewrot.gitlabstack import GitlabService
 from six import iteritems
@@ -44,8 +43,6 @@ def get_git_service(git):
         return GithubService()
     elif git == "gitlab":
         return GitlabService()
-    elif git == "gerrit":
-        return GerritService()
     else:
         raise ValueError("requested git service %s is not valid" % (git))
 
@@ -193,7 +190,7 @@ def parse_cli_args(args):
         parsed arguments (argparse.Namespace): Returns the parsed arguments
     """
     parser = argparse.ArgumentParser(
-        description="Lists pull/merge/change requests for github, gitlab and gerrit"
+        description="Lists pull/merge/change requests for github and gitlab"
     )
     default_config = expanduser("~/.reviewrot.yaml")
     parser.add_argument(
