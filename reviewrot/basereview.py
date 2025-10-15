@@ -231,7 +231,6 @@ class BaseReview(object):
             "oneline": self._format_oneline(i, n),
             "indented": self._format_indented(i, n, show_last_comment),
             "json": self._format_json(i, n, show_last_comment),
-            "irc": self._format_irc(),
         }
         return lookup[style]
 
@@ -315,32 +314,6 @@ class BaseReview(object):
         # Include a comma after every entry, except the last.
         suffix = "," if i < n - 1 else ""
         return json.dumps(self.__json__(show_last_comment), indent=2) + suffix
-
-    def _format_irc(self):
-        """
-        Format the result for irc output.
-
-        Return:
-            formatted_string(str): Formatted string as per style
-        """
-        # \x02 is bold
-        # \x0312 is blue color
-        string = "\x02{}\x02 filed \x02'{}'\x02 \x0312{}\x03 {} ago".format(
-            self.user, self.title, self.url, self.since
-        )
-
-        if self.comments == 1:
-            string += ", {} comment".format(self.comments)
-        elif self.comments > 1:
-            string += ", {} comments".format(self.comments)
-
-        if self.last_comment:
-            string += ", last comment by \x02{}\x02 {} ago".format(
-                self.last_comment.author,
-                self.format_duration(self.last_comment.created_at),
-            )
-
-        return string
 
     def __json__(self, show_last_comment):
         """TODO: docstring goes here."""

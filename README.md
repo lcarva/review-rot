@@ -39,8 +39,7 @@ usage: review-rot [-h] [-c CONFIG]
                   [-f {oneline,indented,json}] [--show-last-comment [DAYS]]
                   [--reverse] [--sort {submitted,updated,commented}] [--debug]
                   [--email EMAIL [EMAIL ...]] [--subject SUBJECT]
-                  [--irc CHANNEL [CHANNEL ...]] [--ignore-wip] [-k]
-                  [--cacert CACERT]
+                  [--ignore-wip] [-k] [--cacert CACERT]
 
 Lists pull/merge/change requests for github, gitlab, pagure, gerrit and
 phabricator
@@ -65,8 +64,6 @@ optional arguments:
   --email EMAIL [EMAIL ...]
                         send output to list of email adresses
   --subject SUBJECT     Email subject text.
-  --irc CHANNEL [CHANNEL ...]
-                        send output to list of irc channels
   --ignore-wip          Omit WIP PRs/MRs from output
 
 SSL:
@@ -126,29 +123,6 @@ arguments:
 Or in command line:
 ```
 review-rot --email user1@example.com user2@example.com
-```
-
-## IRC notification
-
-To use irc notification functionality you must specify irc server configuration in config file
-```
-irc:
-  server: irc.example.com
-  port: 12345
-```
-
-then specify channels in config file for example:
-```
-arguments:
-  # don't forget to use quotes
-  irc: '#channel1, #channel2'
-```
-
-Or in command line:
-```
-# don't forget to use quotes or backslash
-review-rot --irc '#channel1' '#channel2'
-review-rot --irc \#channel1 \#channel2
 ```
 
 ## Automated PR/MR Categorization

@@ -75,7 +75,6 @@ def get_arguments(cli_arguments, config):
             " remove the section or add arguments"
         )
     config_mailer = config.get("mailer", {})
-    config_irc = config.get("irc", {})
 
     parsed_arguments = {}
     command_line_args = vars(cli_arguments)
@@ -123,12 +122,6 @@ def get_arguments(cli_arguments, config):
     if "subject" not in parsed_arguments and "subject" in config_arguments:
         parsed_arguments["subject"] = config_arguments["subject"]
 
-    irc_in_config = config_arguments.get("irc")
-    if irc_in_config:
-        parsed_arguments["irc"] = [
-            channel.strip() for channel in irc_in_config.split(",")
-        ]
-
     age_in_config = config_arguments.get("age")
     if age_in_config:
         values = age_in_config.split(" ")
@@ -160,7 +153,6 @@ def get_arguments(cli_arguments, config):
             "{} format doesn't support last comment functionality".format(format)
         )
 
-    irc = parsed_arguments.get("irc")
     email = parsed_arguments.get("email")
     if email and format:
         raise ValueError("No format should be specified when selecting email output")
@@ -171,16 +163,6 @@ def get_arguments(cli_arguments, config):
         raise ValueError(
             "Missing mailer configuration."
             " Check examples/sampleinput_email.yaml "
-            "for correct configuration."
-        )
-
-    if irc and format:
-        raise ValueError("No format should be specified when selecting irc output")
-
-    if irc and any(property not in config_irc for property in ["server", "port"]):
-        raise ValueError(
-            "Missing irc configuration."
-            " Check examples/sampleinput_irc.yaml "
             "for correct configuration."
         )
 
@@ -299,13 +281,6 @@ def parse_cli_args(args):
         "--email", nargs="+", default=None, help="send output to list of email adresses"
     )
     parser.add_argument("--subject", help="Email subject text")
-    parser.add_argument(
-        "--irc",
-        nargs="+",
-        metavar="CHANNEL",
-        default=None,
-        help="send output to list of irc channels",
-    )
     parser.add_argument(
         "--ignore-wip", help="Omit WIP PRs/MRs from output", action="store_true"
     )
