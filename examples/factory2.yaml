@@ -13,19 +13,6 @@
      - product-definition-center/pdc-tangle
      - product-definition-center/pdc-tangle-web
 
-- type: pagure
-  host: pagure.io
-  repos:
-     - fm-orchestrator
-     - waiverdb
-     - greenwave
-     - odcs
-     - freshmaker
-     - modulemd
-     - sync-to-jira
-     - set-jira-paf
-     - fedrepo_req
-
 - type: gitlab
   host: https://gitlab.cee.redhat.com
   # Get the token at https://gitlab.cee.redhat.com/profile/personal_access_tokens

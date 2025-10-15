@@ -6,7 +6,7 @@
 - Replace *-s, -v, -d* arguments with one argument *--age*
 
 # review-rot
-reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab, pagure and gerrit.
+reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab and gerrit.
 
 ## Sample I/P:
 Create '~/.reviewrot.yaml'. browse the [examples](https://github.com/nirzari/review-rot/tree/master/examples/) for content.
@@ -39,7 +39,7 @@ usage: review-rot [-h] [-c CONFIG]
                   [--reverse] [--sort {submitted,updated,commented}] [--debug]
                   [--ignore-wip] [-k] [--cacert CACERT]
 
-Lists pull/merge/change requests for github, gitlab, pagure and gerrit
+Lists pull/merge/change requests for github, gitlab and gerrit
 
 optional arguments:
   -h, --help            show this help message and exit

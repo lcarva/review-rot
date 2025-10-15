@@ -14,7 +14,6 @@ from reviewrot.basereview import Age
 from reviewrot.gerritstack import GerritService
 from reviewrot.githubstack import GithubService
 from reviewrot.gitlabstack import GitlabService
-from reviewrot.pagurestack import PagureService
 from six import iteritems
 from six.moves import input
 import yaml
@@ -45,8 +44,6 @@ def get_git_service(git):
         return GithubService()
     elif git == "gitlab":
         return GitlabService()
-    elif git == "pagure":
-        return PagureService()
     elif git == "gerrit":
         return GerritService()
     else:
@@ -196,8 +193,7 @@ def parse_cli_args(args):
         parsed arguments (argparse.Namespace): Returns the parsed arguments
     """
     parser = argparse.ArgumentParser(
-        description="Lists pull/merge/change requests for github, gitlab,"
-        " pagure and gerrit"
+        description="Lists pull/merge/change requests for github, gitlab and gerrit"
     )
     default_config = expanduser("~/.reviewrot.yaml")
     parser.add_argument(
