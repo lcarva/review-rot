@@ -29,7 +29,7 @@ class GitlabService(BaseService):
         token=None,
         host=None,
         ssl_verify=True,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates a gitlab object.

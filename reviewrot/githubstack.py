@@ -26,7 +26,7 @@ class GithubService(BaseService):
         token=None,
         host=None,
         labels=None,
-        **kwargs
+        **kwargs,
     ):
         """
         Creates a github object.

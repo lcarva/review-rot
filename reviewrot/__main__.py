@@ -1,19 +1,20 @@
-#!/usr/bin/env python
+"""Main entry point for review-rot CLI."""
+
+import datetime
 import logging
 import operator
-import datetime
 import os
 import sys
 
-from reviewrot.basereview import BaseReview
-from reviewrot import (
-    get_git_service,
+from . import (
+    CHOICES,
     get_arguments,
+    get_git_service,
     load_config_file,
     parse_cli_args,
-    CHOICES,
     remove_wip,
 )
+from .basereview import BaseReview
 
 format_duration = BaseReview.format_duration
 
@@ -41,13 +42,12 @@ def _get_token(item):
 
 
 def is_automated_pr(user, automated_users=None):
-    """
-    Check if the user is a known automation bot.
+    """Check if the user is a known automation bot.
 
     Args:
         user (str): Username to check
-        automated_users (list, optional): List of automated users/bots from configuration.
-                                        If not provided, uses default hardcoded list.
+        automated_users (list, optional): List of automated users/bots
+            from configuration. If not provided, uses default hardcoded list.
 
     Returns:
         bool: True if the user is an automated bot, False otherwise
@@ -73,11 +73,10 @@ def is_automated_pr(user, automated_users=None):
 
 
 def main():
-    """
-    Reads arguments from CLI and configuration file.
+    """Read arguments from CLI and configuration file.
+
     Calls appropriate git service with suitable inputs.
     """
-
     cli_args = parse_cli_args(sys.argv[1:])
     config = load_config_file(cli_args.config)
 
@@ -206,8 +205,7 @@ def main():
 
 
 def sort_by_last_comment(result):
-    """
-    Helper function for sorting by last comment date
+    """Helper function for sorting by last comment date.
 
     Args:
         result (reviewrot.basereview.Basereview):
@@ -217,7 +215,6 @@ def sort_by_last_comment(result):
         last comment date (datetime.datetime): when available or
         default datetime.datetime with MAX value
     """
-
     if result.last_comment:
         return result.last_comment.created_at
     # if result does not contain last comment, return default datetime
@@ -226,8 +223,7 @@ def sort_by_last_comment(result):
 
 
 def remove_trailing_slash_from_url(url):
-    """
-    Helper function for removing trailing slash from url
+    """Helper function for removing trailing slash from url.
 
     Args:
         url (string): url
@@ -242,12 +238,14 @@ def remove_trailing_slash_from_url(url):
 
 
 def format_user_repo_name(data, git_service):
-    """
-    Takes input from configuration file for a specified git service.
+    """Take input from config file for a git service and format it.
+
     Split or format it as required.
+
     Args:
         data (str): combination of username and/or reponame
         git_service (BaseService) : Git service object
+
     Returns:
         Dictionary representation of username and reponame
     """

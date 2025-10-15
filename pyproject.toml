@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "review-rot"
+version = "1.0"
+description = "CLI tool to list review(pull) requests from github and gitlab"
+readme = "README.md"
+license = {text = "GPLv3"}
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.14.0",
+    "PyGithub",
+    "PyYAML",
+    "dateutils",
+    "python-gitlab>=1.6.0",
+    "Jinja2",
+]
+
+[project.urls]
+Homepage = "https://github.com/redhat-aqe/review-rot"
+
+[project.scripts]
+review-rot = "reviewrot.__main__:main"
+
+[tool.setuptools]
+packages = ["reviewrot"]
+
+[tool.setuptools.package-data]
+reviewrot = ["**/*"]
