@@ -2,12 +2,11 @@
 - **Configurable automated users per git service** - You can now configure automated users/bots per service instead of using a hardcoded list
 - Exclude Gerrit changes with no reviewers invited
 - Refactoring all tests & Tox support
-- Phabricator support (check examples/sampleinput_phabricator.yaml )
 - Possibility of omitting WIP pull requests/merge requests in output with *--ignore-wip* argument
 - Replace *-s, -v, -d* arguments with one argument *--age*
 
 # review-rot
-reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab, pagure, gerrit and phabricator.
+reviewrot is a CLI tool, that helps to list down open review requests from github, gitlab, pagure and gerrit.
 
 ## Sample I/P:
 Create '~/.reviewrot.yaml'. browse the [examples](https://github.com/nirzari/review-rot/tree/master/examples/) for content.
@@ -40,8 +39,7 @@ usage: review-rot [-h] [-c CONFIG]
                   [--reverse] [--sort {submitted,updated,commented}] [--debug]
                   [--ignore-wip] [-k] [--cacert CACERT]
 
-Lists pull/merge/change requests for github, gitlab, pagure, gerrit and
-phabricator
+Lists pull/merge/change requests for github, gitlab, pagure and gerrit
 
 optional arguments:
   -h, --help            show this help message and exit

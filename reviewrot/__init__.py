@@ -15,7 +15,6 @@ from reviewrot.gerritstack import GerritService
 from reviewrot.githubstack import GithubService
 from reviewrot.gitlabstack import GitlabService
 from reviewrot.pagurestack import PagureService
-from reviewrot.phabricatorstack import PhabricatorService
 from six import iteritems
 from six.moves import input
 import yaml
@@ -50,8 +49,6 @@ def get_git_service(git):
         return PagureService()
     elif git == "gerrit":
         return GerritService()
-    elif git == "phabricator":
-        return PhabricatorService()
     else:
         raise ValueError("requested git service %s is not valid" % (git))
 
@@ -200,7 +197,7 @@ def parse_cli_args(args):
     """
     parser = argparse.ArgumentParser(
         description="Lists pull/merge/change requests for github, gitlab,"
-        " pagure, gerrit and phabricator"
+        " pagure and gerrit"
     )
     default_config = expanduser("~/.reviewrot.yaml")
     parser.add_argument(
