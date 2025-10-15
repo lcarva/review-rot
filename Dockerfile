@@ -1,4 +1,4 @@
-FROM registry.redhat.io/rhel9/python-39:latest
+FROM registry.redhat.io/rhel10/python-312-minimal:latest
 
 # TODO: Add some helpful labels.
 
