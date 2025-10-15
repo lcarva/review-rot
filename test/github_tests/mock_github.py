@@ -35,21 +35,21 @@ class MockValueOlder:
 class MockGithubComments:
     """Mocks Github Comments object."""
 
-    totalCount = int(1)
+    totalCount = int(1)  # noqa: N815
     reversed = [MockValue]
 
 
 class MockGithubCommentsOlder:
     """Mocks Github Comments object."""
 
-    totalCount = int(1)
+    totalCount = int(1)  # noqa: N815
     reversed = [MockValueOlder]
 
 
 class MockGithubCommentsEmpty:
     """Mocks Github Comment object with no comments."""
 
-    totalCount = 0
+    totalCount = 0  # noqa: N815
     reversed = []
 
 

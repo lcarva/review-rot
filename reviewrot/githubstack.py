@@ -101,7 +101,9 @@ class GithubService(BaseService):
                     response.extend(res)
         return response
 
-    def get_reviews(self, uname, repo_name, age=None, show_last_comment=None, labels=None):
+    def get_reviews(
+        self, uname, repo_name, age=None, show_last_comment=None, labels=None
+    ):
         """
         Fetches pull requests for specified username and repo name.
 
@@ -184,7 +186,11 @@ class GithubService(BaseService):
                 last_comment=last_comment,
                 project_name=repo.full_name,
                 project_url=repo.html_url,
-                labels=[label.name for label in pr.labels if label.name in labels] if labels is not None else [],
+                labels=(
+                    [label.name for label in pr.labels if label.name in labels]
+                    if labels is not None
+                    else []
+                ),
             )
             log.debug(res)
             res_.append(res)
