@@ -6,7 +6,6 @@ import datetime
 import logging
 from os.path import exists, expanduser, expandvars
 import re
-from shutil import copyfile
 
 from dateutil.relativedelta import relativedelta
 import requests
@@ -302,25 +301,6 @@ def load_config_file(config_path):
 
     # read input from the config file for pull requests
     config = load_ordered_config(config_path)
-    if isinstance(config, list):
-        # convert to new format
-        config = dict(git_services=config, arguments=None)
-        prompt = "Would you like to rewrite the config file in new " "format [y/n] :"
-
-        input_choice = input(prompt)
-
-        answer = str(input_choice).lower().strip()
-        if answer == "y" or answer == "":
-            print
-            # Take the backup of configuration file and
-            # save the configurations in new format
-            backup_path = config_path + ".backup"
-            log.info("Creating back up at " + backup_path)
-            copyfile(config_path, backup_path)
-            log.info("Rewriting %r in new format!" % config_path)
-            with open(config_path, "w") as f:
-                f.write(yaml.dump(config, default_flow_style=False))
-
     return config
 
 
