@@ -188,7 +188,6 @@ def main():
                 )
             print(report_suffixes[formatting])
         else:
-            # TODO: Please be smarter about this...
             with open(output_file, "w") as f:
                 print(report_prefixes[formatting], file=f)
                 for i, result in enumerate(sorted_results):

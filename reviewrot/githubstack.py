@@ -248,6 +248,6 @@ class GithubService(BaseService):
 
 
 class GithubReview(BaseReview):
-    """TODO: docstring goes here."""
+    """Represents a GitHub pull request."""
 
     pass

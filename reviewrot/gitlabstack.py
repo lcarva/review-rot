@@ -229,7 +229,7 @@ class GitlabService(BaseService):
 
 
 class GitlabReview(BaseReview):
-    """TODO: docstring goes here."""
+    """Represents a GitLab merge request."""
 
     # XXX - Here just until we figure out how to do gitlab avatars.
     logo = "https://docs.gitlab.com/assets/images/gitlab-logo.svg"

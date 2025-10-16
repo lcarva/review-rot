@@ -1,5 +1,3 @@
-"""TODO: docstring goes here."""
-
 from datetime import datetime, timezone
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
@@ -15,7 +13,6 @@ class BaseServiceTest(TestCase):
     """This class represents the BaseService test cases."""
 
     def test_check_request_state_newer(self):
-        """TODO: docstring goes here."""
         base_service = BaseService()
         # created four hours ago
         now = datetime.now()
@@ -34,7 +31,6 @@ class BaseServiceTest(TestCase):
         self.assertFalse(actual)
 
     def test_check_request_state_older(self):
-        """TODO: docstring goes here."""
         base_service = BaseService()
         now = datetime.now()
         # created four hours ago
@@ -53,7 +49,6 @@ class BaseServiceTest(TestCase):
         self.assertTrue(actual)
 
     def test_check_request_state_age_is_none(self):
-        """TODO: docstring goes here."""
         base_service = BaseService()
         now = datetime.now()
         # created four hours ago
@@ -127,7 +122,6 @@ class BaseReviewTest(TestCase):
     """This class represents the BaseReview test cases."""
 
     def setUp(self):
-        """TODO: docstring goes here."""
         self.mock_base_review = BaseReview()
         self.mock_base_review.user = "mock_user"
         self.mock_base_review.title = "mock_title"

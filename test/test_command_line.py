@@ -1,5 +1,3 @@
-"""TODO: docstring goes here."""
-
 import argparse
 import datetime
 import logging
@@ -32,7 +30,6 @@ class CommandLineParserTest(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """TODO: docstring goes here."""
         filename = join(dirname(__file__), "yaml/test_command_line.yaml")
         with open(filename, "r") as f:
             cls.config = yaml.safe_load(f)
@@ -72,7 +69,6 @@ class CommandLineParserTest(TestCase):
         assert mocked_exists.called
 
     def test_args_from_config_with_insecure(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert=None,
             debug=False,
@@ -105,7 +101,6 @@ class CommandLineParserTest(TestCase):
         )
 
     def test_args_from_command_line(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert=None,
             debug=True,
@@ -140,7 +135,6 @@ class CommandLineParserTest(TestCase):
         )
 
     def test_args_from_command_line_except_format(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert=None,
             debug=True,
@@ -174,7 +168,6 @@ class CommandLineParserTest(TestCase):
         )
 
     def test_args_ca_certi_invalid_path_from_config(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert=None,
             debug=False,
@@ -191,7 +184,6 @@ class CommandLineParserTest(TestCase):
             self.assertTrue(msg in str(context.exception), msg=context.exception)
 
     def test_args_ca_certi_invalid_path_from_command_line(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert="~/review-rot/",
             debug=False,
@@ -208,7 +200,6 @@ class CommandLineParserTest(TestCase):
             self.assertTrue(msg in str(context.exception), msg=context.exception)
 
     def test_args_cacert_with_insecure(self):
-        """TODO: docstring goes here."""
         cli_args = argparse.Namespace(
             cacert=None,
             debug=False,
@@ -224,7 +215,6 @@ class CommandLineParserTest(TestCase):
             self.assertTrue(msg in str(context.exception), msg=context.exception)
 
     def test_age_argument_in_command_line_valid(self):
-        """TODO: docstring goes here."""
         now = datetime.datetime.now()
         expected_date = now - relativedelta(days=5, hours=4)
 
@@ -237,7 +227,6 @@ class CommandLineParserTest(TestCase):
         )
 
     def test_age_argument_in_config(self):
-        """TODO: docstring goes here."""
         now = datetime.datetime.now()
         expected_date = now - relativedelta(days=5, hours=4)
 
@@ -253,10 +242,7 @@ class CommandLineParserTest(TestCase):
 
 
 class ParseAgeTest(unittest.TestCase):
-    """TODO: docstring goes here."""
-
     def test_missing_state(self):
-        """TODO: docstring goes here."""
         with self.assertRaises(ValueError) as context:
             ParseAge.parse(["5d", "4h"])
         self.assertTrue(
@@ -265,13 +251,11 @@ class ParseAgeTest(unittest.TestCase):
         )
 
     def test_missing_relative_age(self):
-        """TODO: docstring goes here."""
         with self.assertRaises(ValueError) as context:
             ParseAge.parse(["newer"])
         self.assertTrue("Missing arguments" in str(context.exception))
 
     def test_wrong_state(self):
-        """TODO: docstring goes here."""
         with self.assertRaises(ValueError) as context:
             ParseAge.parse(["oldnew", "5d", "4h"])
         self.assertTrue(
@@ -280,17 +264,13 @@ class ParseAgeTest(unittest.TestCase):
         )
 
     def test_invalid_unit(self):
-        """TODO: docstring goes here."""
         with self.assertRaises(ValueError) as context:
             ParseAge.parse(["older", "5", "4x"])
         self.assertTrue("Invalid unit" in str(context.exception))
 
 
 class IgnoreWIPTest(unittest.TestCase):
-    """TODO: docstring goes here."""
-
     def test_remove_wip(self):
-        """TODO: docstring goes here."""
         results = [
             FakeReview(title="WIP: add a functionality"),
             FakeReview(title="WIP:fix bug"),
@@ -317,7 +297,6 @@ class FakeReview:
     """Mocks small part of BaseReview."""
 
     def __init__(self, title):
-        """TODO: docstring goes here."""
         self.title = title
 
 

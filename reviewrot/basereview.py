@@ -24,7 +24,7 @@ def gravatar(email):
 
 
 class BaseService(object):
-    """TODO: docstring goes here."""
+    """Base class for interacting with git service providers (GitHub, GitLab, etc.)."""
 
     def check_request_state(self, created_at, age):
         """
@@ -106,7 +106,7 @@ class BaseService(object):
 
 
 class BaseReview(object):
-    """TODO: docstring goes here."""
+    """Base class representing a review request (pull request/merge request) from a git service."""
 
     def __init__(
         self,
@@ -184,7 +184,6 @@ class BaseReview(object):
 
     @property
     def since(self):
-        """TODO: docstring goes here."""
         return self.format_duration(created_at=self.time)
 
     def format(self, style, i, n, show_last_comment=None):
@@ -288,7 +287,6 @@ class BaseReview(object):
         return json.dumps(self.__json__(show_last_comment), indent=2) + suffix
 
     def __json__(self, show_last_comment):
-        """TODO: docstring goes here."""
         data = {
             "user": self.user,
             "title": self.title,

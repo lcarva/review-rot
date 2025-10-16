@@ -138,12 +138,10 @@ class ParseAge(argparse.Action):
     """Custom argument parsing class that handles the --age argument."""
 
     def __call__(self, parser, namespace, values, option_string=None):
-        """TODO: docstring goes here."""
         setattr(namespace, self.dest, self.parse(values))
 
     @staticmethod
     def parse(values):
-        """TODO: docstring goes here."""
         if len(values) < 2:
             raise ValueError("Missing arguments")
 
@@ -318,11 +316,9 @@ def load_ordered_config(config_path):
     _mapping_tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
 
     def dict_representer(dumper, data):
-        """TODO: docstring goes here."""
         return dumper.represent_mapping(_mapping_tag, data.items())
 
     def dict_constructor(loader, node):
-        """TODO: docstring goes here."""
         return collections.OrderedDict(loader.construct_pairs(node))
 
     yaml.add_representer(collections.OrderedDict, dict_representer)
@@ -330,7 +326,6 @@ def load_ordered_config(config_path):
 
     #  format the output to print a blank scalar rather than null
     def represent_none(self, _):
-        """TODO: docstring goes here."""
         return self.represent_scalar("tag:yaml.org,2002:null", "")
 
     yaml.add_representer(type(None), represent_none)
