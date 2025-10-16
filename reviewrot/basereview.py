@@ -106,7 +106,11 @@ class BaseService(object):
 
 
 class BaseReview(object):
-    """Base class representing a review request (pull request/merge request) from a git service."""
+    """
+    Base class representing a review request.
+
+    Represents pull request/merge request from a git service.
+    """
 
     def __init__(
         self,
