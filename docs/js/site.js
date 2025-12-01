@@ -28,6 +28,9 @@ $(document).ready(function() {
 			$('.footer').append(footer_template({
 				generated: moment(modified).fromNow()
 			}));
+			var regularCount = 0;
+			var automatedCount = 0;
+			var wipCount = 0;
 			$.each(data, function(key, value) {
 				value.pretty_repo = prettify_repo(value.url);
 				// Strip off the pull request from the URL to get the base URL of the repo
@@ -37,15 +40,21 @@ $(document).ready(function() {
 				}
 				
 				if (value.is_automated) {
+					automatedCount++;
 					$('#automated-tab').removeClass('hidden');
 					$('#automated-reviews').append(entry_template(value));
 				} else if (value.title.toUpperCase().indexOf("WIP") != -1) {
+					wipCount++;
 					$('#wip-tab').removeClass('hidden');
 					$('#wip-reviews').append(entry_template(value));
 				} else {
+					regularCount++;
 					$('#reviews').append(entry_template(value));
 				}
 			});
+			$('#automated-tab a').text('Automated Pull Requests (' + automatedCount + ')');
+			$('#wip-tab a').text('Work In Progress (' + wipCount + ')');
+			$('.nav-tabs li.active a').text('Regular Pull Requests (' + regularCount + ')');
 			$('.page-header').append(stats_template(average_age(data)));
 		}
 	})
